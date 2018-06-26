@@ -1,0 +1,12 @@
+[submodule "vendor/libretro-common"]
+	path = vendor/libretro-common
+	url = https://github.com/libretro/libretro-common.git
+	ignore = dirty
+[submodule "vendor/cairo"]
+	path = vendor/cairo
+	url = https://gitlab.com/cairo/cairo.git
+	ignore = dirty
+[submodule "vendor/pixman"]
+	path = vendor/pixman
+	url = https://anongit.freedesktop.org/git/pixman.git
+	ignore = dirty
