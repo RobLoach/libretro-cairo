@@ -22,6 +22,16 @@ ifeq ($(platform), win)
 	LIBS += -lgdi32 -lmsimg32
 endif
 
+with_fpic=
+ifneq ($(fpic),)
+   with_fpic := --with-pic=yes
+endif
+
+host_opts=
+ifneq ($(HOST),)
+	host_opts := --host=$(HOST)
+endif
+
 # Ignore first attempt builds, and re-try for a cleaner dependency chain.
 all: $(TARGET)
 

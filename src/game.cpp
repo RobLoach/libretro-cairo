@@ -1,12 +1,15 @@
+#include <iostream>
+
 #include "game.h"
 #include "libretro.h"
-#include <iostream>
+
+#include <cairo/cairo.h>
 
 int SCREEN_PITCH = 0;
 
-//static cairo_surface_t *surface = NULL;
-//static cairo_surface_t *static_surface = NULL;
-//static cairo_t *ctx = NULL;
+static cairo_surface_t *surface = NULL;
+static cairo_surface_t *static_surface = NULL;
+static cairo_t *ctx = NULL;
 
 
 static uint16_t *frame_buf;
@@ -14,21 +17,24 @@ extern retro_environment_t environ_cb;
 
 void game_init()
 {
-	/*
-   frame_buf = calloc(SCREEN_HEIGHT, SCREEN_PITCH);
+   int width = 640;
+   int height = 480;
+	int pitch = cairo_format_stride_for_width(CAIRO_FORMAT_RGB16_565, width);
+
+   frame_buf = (uint16_t*)calloc(height, pitch);
    srand(time(NULL));
 
    surface = cairo_image_surface_create_for_data(
-            (unsigned char*)frame_buf, CAIRO_FORMAT_RGB16_565, SCREEN_WIDTH, SCREEN_HEIGHT,
-            SCREEN_PITCH);
+            (unsigned char*)frame_buf, CAIRO_FORMAT_RGB16_565, width, height,
+            pitch);
 
    ctx = cairo_create(surface);
 
-   init_luts();
-   init_static_surface();
+   //init_luts();
+   //init_static_surface();
 
-   init_game();
-   start_game();*/
+   //init_game();
+   //start_game();
 }
 
 void game_deinit()
@@ -40,7 +46,7 @@ void game_deinit()
    {
       cairo_pattern_destroy(color_lut[i]);
       color_lut[i] = NULL;
-   }
+   }*/
 
    cairo_destroy(ctx);
    cairo_surface_destroy(surface);
@@ -52,9 +58,9 @@ void game_deinit()
 
    if (frame_buf)
       free(frame_buf);
-   frame_buf = NULL;*/
-
+   frame_buf = NULL;
 }
+
 int game_init_pixelformat()
 {
 	
