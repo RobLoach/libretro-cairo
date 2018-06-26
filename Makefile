@@ -57,7 +57,7 @@ $(DEP_INSTALL_DIR)/lib/libpixman-1.a:
 $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a
 	cd $(CORE_DIR)/vendor/cairo && \
 		./autogen.sh && \
-		./configure $(host_opts) --enable-static=yes --enable-ft=yes --enable-shared=no \
+		./configure $(host_opts) --enable-static=yes --enable-ft=no --enable-shared=no \
 			--enable-gobject=no --enable-trace=no --enable-interpreter=no \
 			--enable-symbol-lookup=no --enable-svg=no --enable-pdf=no --enable-ps=no \
 			--enable-wgl=no --enable-glx=no --enable-egl=no --disable-valgrind \
@@ -68,10 +68,10 @@ $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a
 		$(MAKE) && $(MAKE) install
 
 clean_cairo:
-	cd vendor/cairo; [[ -f Makefile ]] && make distclean || true
+	cd vendor/cairo && ./autogen.sh && make distclean || true
 
 clean_pixman:
-	cd vendor/pixman; [[ -f Makefile ]] && make distclean || true
+	cd vendor/pixman && ./autogen.sh && make distclean || true
 
 clean: clean_cairo clean_pixman
 	rm -rf $(TARGET) $(OBJECTS) $(DEP_INSTALL_DIR)
