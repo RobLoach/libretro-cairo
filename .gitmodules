@@ -22,3 +22,7 @@
 	path = vendor/fontconf
 	url = https://github.com/freedesktop/fontconfig.git
 	ignore = dirty
+[submodule "vendor/zlib"]
+	path = vendor/zlib
+	url = https://github.com/madler/zlib.git
+	ignore = dirty
