@@ -73,7 +73,9 @@ $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_IN
 			--enable-drm=no --enable-xcb-drm=no --enable-drm-xr=no --disable-lto  \
 			--enable-qt=no \
 			$(with_fpic) CFLAGS="-fno-lto" \
-			pixman_CFLAGS="-I$(DEP_INSTALL_DIR)/include/pixman-1 -I$(DEP_INSTALL_DIR)/include/libpng" pixman_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpixman-1 -lpng" --prefix=$(DEP_INSTALL_DIR) && \
+			pixman_CFLAGS="-I$(DEP_INSTALL_DIR)/include/pixman-1" pixman_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpixman-1" \
+			png_CFLAGS="-I$(DEP_INSTALL_DIR)/include/libpng16" png_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+			--prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
 clean_cairo:
