@@ -62,10 +62,20 @@ $(DEP_INSTALL_DIR)/lib/libpng.a:
 			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
-$(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a
+$(DEP_INSTALL_DIR)/lib/freetype.a: $(DEP_INSTALL_DIR)/lib/libpng.a
+	cd $(CORE_DIR)/vendor/freetype2 && \
+		./autogen.sh && \
+		./configure $(host_opts) --enable-shared=no --enable-static=yes \
+			--with-zlib=no --with-bzip2=no --with-png=yes --with-harfbuzz=no \
+			--with-fsspec=no --with-fsref=no --with-quickdraw-toolbox=no --with-quickdraw-carbon=no --with-ats=no \
+			LIBPNG_CFLAGS="-I$(DEP_INSTALL_DIR)/include/libpng16" LIBPNG_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
+		$(MAKE) && $(MAKE) install
+
+$(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a $(DEP_INSTALL_DIR)/lib/freetype.a
 	cd $(CORE_DIR)/vendor/cairo && \
 		./autogen.sh && \
-		./configure $(host_opts) --enable-static=yes --enable-ft=no --enable-shared=no \
+		./configure $(host_opts) --enable-static=yes --enable-ft=yes --enable-shared=no \
 			--enable-gobject=no --enable-trace=no --enable-interpreter=no \
 			--enable-symbol-lookup=no --enable-svg=no --enable-pdf=no --enable-ps=no \
 			--enable-wgl=no --enable-glx=no --enable-egl=no --disable-valgrind \
