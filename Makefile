@@ -40,13 +40,13 @@ deps: $(DEP_INSTALL_DIR)/lib/libcairo.a
 $(OBJECTS): vendor/libretro-common/include/libretro.h deps
 
 $(TARGET): $(OBJECTS)
-	-$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 %.o: %.cpp
-	-$(CXX) -c -o $@ $< $(CXXFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 %.o: %.c
-	-$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(DEP_INSTALL_DIR)/lib/libpixman-1.a:
 	cd $(CORE_DIR)/vendor/pixman && \

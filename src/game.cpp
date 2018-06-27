@@ -5,6 +5,8 @@
 
 #include <cairo/cairo.h>
 
+#include <cstring>
+
 int SCREEN_PITCH = 0;
 int SCREEN_WIDTH = 640;
 int SCREEN_HEIGHT = 480;
