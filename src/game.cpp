@@ -93,6 +93,20 @@ void game_render() {
    cairo_arc(ctx, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, 50.0, 0.0, 2.0 * 3.14159);
    cairo_fill(ctx);
 
+   // Test the freetype.
+   cairo_select_font_face (ctx, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+   cairo_set_font_size (ctx, 90.0);
+   cairo_move_to (ctx, 10.0, 135.0);
+   cairo_show_text (ctx, "Hello");
+
+   cairo_move_to (ctx, 70.0, 165.0);
+   cairo_text_path (ctx, "World");
+   cairo_set_source_rgb (ctx, 0.5, 0.5, 1);
+   cairo_fill_preserve (ctx);
+   cairo_set_source_rgb (ctx, 0, 0, 0);
+   cairo_set_line_width (ctx, 2.56);
+   cairo_stroke (ctx);
+
    // Set the frame buffer.
    video_cb(frame_buf, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_PITCH);
 }
