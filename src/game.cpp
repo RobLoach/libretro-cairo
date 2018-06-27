@@ -6,8 +6,8 @@
 #include <cairo/cairo.h>
 
 int SCREEN_PITCH = 0;
-int SCREEN_WIDTH = 1920;
-int SCREEN_HEIGHT = 1080;
+int SCREEN_WIDTH = 640;
+int SCREEN_HEIGHT = 480;
 
 static cairo_surface_t *surface = NULL;
 static cairo_surface_t *static_surface = NULL;

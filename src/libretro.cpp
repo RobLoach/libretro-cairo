@@ -184,8 +184,8 @@ void retro_get_system_info(struct retro_system_info *info) {
  */
 void retro_get_system_av_info(struct retro_system_av_info *info) {
 	std::cout << "retro_get_system_av_info" << std::endl;
-	unsigned int width = 1920;
-	unsigned int height = 1080;
+	unsigned int width = 640;
+	unsigned int height = 480;
 
 	info->geometry.base_width   = width;
 	info->geometry.base_height  = height;
