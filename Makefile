@@ -16,7 +16,7 @@ DEP_INSTALL_DIR := $(CORE_DIR)/tmp
 
 CFLAGS += -I$(DEP_INSTALL_DIR)/include
 LFLAGS := -L$(DEP_INSTALL_DIR)/lib
-LIBS := $(DEP_INSTALL_DIR)/lib/libcairo.a $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a $(DEP_INSTALL_DIR)/lib/libfreetype.a -lpthread -lm
+LIBS := -L$(DEP_INSTALL_DIR)/lib -lcairo -lpixman-1 -lpng -lfreetype -lpthread -lm
 
 ifeq ($(platform), win)
 	LIBS += -lgdi32 -lmsimg32
