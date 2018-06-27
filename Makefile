@@ -62,12 +62,13 @@ $(DEP_INSTALL_DIR)/lib/libpng.a:
 			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
-$(DEP_INSTALL_DIR)/lib/freetype.a: $(DEP_INSTALL_DIR)/lib/libpng.a
+$(DEP_INSTALL_DIR)/lib/libfreetype.a: $(DEP_INSTALL_DIR)/lib/libpng.a
 	cd $(CORE_DIR)/vendor/freetype2 && \
 		./autogen.sh && \
 		./configure $(host_opts) --enable-shared=no --enable-static=yes \
 			--with-zlib=no --with-bzip2=no --with-png=yes --with-harfbuzz=no \
 			--with-fsspec=no --with-fsref=no --with-quickdraw-toolbox=no --with-quickdraw-carbon=no --with-ats=no \
+			--with-old-mac-fonts=no \
 			LIBPNG_CFLAGS="-I$(DEP_INSTALL_DIR)/include/libpng16" LIBPNG_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
 			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
