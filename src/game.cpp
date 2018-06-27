@@ -41,7 +41,7 @@ void game_init()
    //init_game();
    //start_game();
 
-   image = cairo_image_surface_create_from_png("src/helloworld.png");
+   image = cairo_image_surface_create_from_png("test/mario.png");
 }
 
 void game_deinit()
@@ -112,9 +112,9 @@ void game_render() {
    cairo_set_line_width (ctx, 2.56);
    cairo_stroke (ctx);
 
-
-  cairo_set_source_surface(ctx, image, 350, 20);
-  cairo_paint(ctx);  
+   // Draw the image.
+   cairo_set_source_surface(ctx, image, 400, 80);
+   cairo_paint(ctx);  
 
    // Set the frame buffer.
    video_cb(frame_buf, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_PITCH);
