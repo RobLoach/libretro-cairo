@@ -16,7 +16,7 @@ DEP_INSTALL_DIR := $(CORE_DIR)/tmp
 
 CFLAGS += -I$(DEP_INSTALL_DIR)/include
 LFLAGS := -L$(DEP_INSTALL_DIR)/lib
-LIBS := $(DEP_INSTALL_DIR)/lib/libcairo.a $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a -lpthread -lm
+LIBS := $(DEP_INSTALL_DIR)/lib/libcairo.a $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a $(DEP_INSTALL_DIR)/lib/libfreetype.a -lpthread -lm
 
 ifeq ($(platform), win)
 	LIBS += -lgdi32 -lmsimg32
@@ -72,7 +72,7 @@ $(DEP_INSTALL_DIR)/lib/freetype.a: $(DEP_INSTALL_DIR)/lib/libpng.a
 			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
-$(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a $(DEP_INSTALL_DIR)/lib/freetype.a
+$(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a $(DEP_INSTALL_DIR)/lib/libfreetype.a
 	cd $(CORE_DIR)/vendor/cairo && \
 		./autogen.sh && \
 		./configure $(host_opts) --enable-static=yes --enable-ft=yes --enable-shared=no \
@@ -85,6 +85,7 @@ $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_IN
 			$(with_fpic) CFLAGS="-fno-lto" \
 			pixman_CFLAGS="-I$(DEP_INSTALL_DIR)/include/pixman-1" pixman_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpixman-1" \
 			png_CFLAGS="-I$(DEP_INSTALL_DIR)/include/libpng16" png_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+			FREETYPE_CFLAGS="-I$(DEP_INSTALL_DIR)/include/freetype2" FREETYPE_LIBS="-L$(DEP_INSTALL_DIR)/lib -lfreetype" \
 			--prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
