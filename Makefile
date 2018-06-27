@@ -16,7 +16,7 @@ DEP_INSTALL_DIR := $(CORE_DIR)/tmp
 
 CFLAGS += -I$(DEP_INSTALL_DIR)/include
 LFLAGS := -L$(DEP_INSTALL_DIR)/lib
-LIBS := -L$(DEP_INSTALL_DIR)/lib -lcairo -lpixman-1 -lpng -lfreetype -lpthread -lm
+LIBS := -L$(DEP_INSTALL_DIR)/lib -lcairo -lpixman-1 -lpng16 -lfreetype -lfontconfig -lpthread -lm
 
 ifeq ($(platform), win)
 	LIBS += -lgdi32 -lmsimg32
@@ -61,6 +61,15 @@ $(DEP_INSTALL_DIR)/lib/libpng.a:
 			--enable-hardware-optimizations=no \
 			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
+
+#$(DEP_INSTALL_DIR)/lib/libfontconfig.a: $(DEP_INSTALL_DIR)/lib/libfreetype.a
+#	cd $(CORE_DIR)/vendor/fontconf && \
+#		./autogen.sh && \
+#		./configure $(host_opts) --enable-shared=no --enable-static=yes \
+#			--disable-docs --disable-nls --enable-iconv \
+#			FREETYPE_CFLAGS="-I$(DEP_INSTALL_DIR)/include/freetype2" FREETYPE_LIBS="-L$(DEP_INSTALL_DIR)/lib -lfreetype" \
+#			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
+#		$(MAKE) && $(MAKE) install
 
 $(DEP_INSTALL_DIR)/lib/libfreetype.a: $(DEP_INSTALL_DIR)/lib/libpng.a
 	cd $(CORE_DIR)/vendor/freetype2 && \
