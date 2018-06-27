@@ -10,3 +10,7 @@
 	path = vendor/pixman
 	url = https://anongit.freedesktop.org/git/pixman.git
 	ignore = dirty
+[submodule "vendor/libpng"]
+	path = vendor/libpng
+	url = https://github.com/glennrp/libpng.git
+	ignore = dirty

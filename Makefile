@@ -16,7 +16,7 @@ DEP_INSTALL_DIR := $(CORE_DIR)/tmp
 
 CFLAGS += -I$(DEP_INSTALL_DIR)/include
 LFLAGS := -L$(DEP_INSTALL_DIR)/lib
-LIBS := $(DEP_INSTALL_DIR)/lib/libcairo.a $(DEP_INSTALL_DIR)/lib/libpixman-1.a -lpthread -lm
+LIBS := $(DEP_INSTALL_DIR)/lib/libcairo.a $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a -lpthread -lm
 
 ifeq ($(platform), win)
 	LIBS += -lgdi32 -lmsimg32
@@ -54,18 +54,26 @@ $(DEP_INSTALL_DIR)/lib/libpixman-1.a:
 		./configure $(host_opts) --enable-shared=no --enable-static=yes $(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
-$(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a
+$(DEP_INSTALL_DIR)/lib/libpng.a:
+	cd $(CORE_DIR)/vendor/libpng && \
+		./autogen.sh && \
+		./configure $(host_opts) --enable-shared=no --enable-static=yes \
+			--enable-hardware-optimizations=no \
+			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
+		$(MAKE) && $(MAKE) install
+
+$(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a
 	cd $(CORE_DIR)/vendor/cairo && \
 		./autogen.sh && \
 		./configure $(host_opts) --enable-static=yes --enable-ft=no --enable-shared=no \
 			--enable-gobject=no --enable-trace=no --enable-interpreter=no \
 			--enable-symbol-lookup=no --enable-svg=no --enable-pdf=no --enable-ps=no \
 			--enable-wgl=no --enable-glx=no --enable-egl=no --disable-valgrind \
-			--enable-silent-rules --enable-png=no  --enable-xlib=no \
+			--enable-silent-rules --enable-png=yes --enable-xlib=no \
 			--enable-drm=no --enable-xcb-drm=no --enable-drm-xr=no --disable-lto  \
 			--enable-qt=no \
 			$(with_fpic) CFLAGS="-fno-lto" \
-			pixman_CFLAGS="-I$(DEP_INSTALL_DIR)/include/pixman-1" pixman_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpixman-1" --prefix=$(DEP_INSTALL_DIR) && \
+			pixman_CFLAGS="-I$(DEP_INSTALL_DIR)/include/pixman-1 -I$(DEP_INSTALL_DIR)/include/libpng" pixman_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpixman-1 -lpng" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
 clean_cairo:
