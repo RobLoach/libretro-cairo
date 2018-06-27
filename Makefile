@@ -16,7 +16,7 @@ DEP_INSTALL_DIR := $(CORE_DIR)/tmp
 
 CFLAGS += -I$(DEP_INSTALL_DIR)/include
 LFLAGS := -L$(DEP_INSTALL_DIR)/lib
-LIBS := $(DEP_INSTALL_DIR)/lib/libcairo.a $(DEP_INSTALL_DIR)/lib/libpixman-1.a -lpthread -lm
+LIBS := -L$(DEP_INSTALL_DIR)/lib -lcairo -lpixman-1 -lpng -lfreetype -lfontconfig -lpthread -lm
 
 ifeq ($(platform), win)
 	LIBS += -lgdi32 -lmsimg32
@@ -40,13 +40,13 @@ deps: $(DEP_INSTALL_DIR)/lib/libcairo.a
 $(OBJECTS): vendor/libretro-common/include/libretro.h deps
 
 $(TARGET): $(OBJECTS)
-	-$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 %.o: %.cpp
-	-$(CXX) -c -o $@ $< $(CXXFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 %.o: %.c
-	-$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(DEP_INSTALL_DIR)/lib/libpixman-1.a:
 	cd $(CORE_DIR)/vendor/pixman && \
@@ -54,19 +54,51 @@ $(DEP_INSTALL_DIR)/lib/libpixman-1.a:
 		./configure $(host_opts) --enable-shared=no --enable-static=yes $(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
-$(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a
+$(DEP_INSTALL_DIR)/lib/libpng.a:
+	cd $(CORE_DIR)/vendor/libpng && \
+		./autogen.sh && \
+		./configure $(host_opts) --enable-shared=no --enable-static=yes \
+			--enable-hardware-optimizations=no \
+			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
+		$(MAKE) && $(MAKE) install
+
+#$(DEP_INSTALL_DIR)/lib/libfontconfig.a: $(DEP_INSTALL_DIR)/lib/libfreetype.a
+#	cd $(CORE_DIR)/vendor/fontconf && \
+#		./autogen.sh && \
+#		./configure $(host_opts) --enable-shared=no --enable-static=yes \
+#			--disable-docs --disable-nls --enable-iconv \
+#			FREETYPE_CFLAGS="-I$(DEP_INSTALL_DIR)/include/freetype2" FREETYPE_LIBS="-L$(DEP_INSTALL_DIR)/lib -lfreetype" \
+#			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
+#		$(MAKE) && $(MAKE) install
+
+#$(DEP_INSTALL_DIR)/lib/libfreetype.a: $(DEP_INSTALL_DIR)/lib/libpng.a
+#	cd $(CORE_DIR)/vendor/freetype2 && \
+#		./autogen.sh && \
+#		./configure $(host_opts) --enable-shared=no --enable-static=yes \
+#			--with-zlib=no --with-bzip2=no --with-png=yes --with-harfbuzz=no \
+#			--with-fsspec=no --with-fsref=no --with-quickdraw-toolbox=no --with-quickdraw-carbon=no --with-ats=no \
+#			--with-old-mac-fonts=no \
+#			LIBPNG_CFLAGS="-I$(DEP_INSTALL_DIR)/include/libpng16" LIBPNG_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+#			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
+#		$(MAKE) && $(MAKE) install
+
+$(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a
 	cd $(CORE_DIR)/vendor/cairo && \
 		./autogen.sh && \
-		./configure $(host_opts) --enable-static=yes --enable-ft=no --enable-shared=no \
+		./configure $(host_opts) --enable-static=yes --enable-ft=yes --enable-shared=no \
 			--enable-gobject=no --enable-trace=no --enable-interpreter=no \
 			--enable-symbol-lookup=no --enable-svg=no --enable-pdf=no --enable-ps=no \
 			--enable-wgl=no --enable-glx=no --enable-egl=no --disable-valgrind \
-			--enable-silent-rules --enable-png=no  --enable-xlib=no \
+			--enable-silent-rules --enable-png=yes --enable-xlib=no \
 			--enable-drm=no --enable-xcb-drm=no --enable-drm-xr=no --disable-lto  \
 			--enable-qt=no \
 			$(with_fpic) CFLAGS="-fno-lto" \
-			pixman_CFLAGS="-I$(DEP_INSTALL_DIR)/include/pixman-1" pixman_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpixman-1" --prefix=$(DEP_INSTALL_DIR) && \
+			pixman_CFLAGS="-I$(DEP_INSTALL_DIR)/include/pixman-1" pixman_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpixman-1" \
+			png_CFLAGS="-I$(DEP_INSTALL_DIR)/include/libpng16" png_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+			--prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
+
+			#FREETYPE_CFLAGS="-I$(DEP_INSTALL_DIR)/include/freetype2" FREETYPE_LIBS="-L$(DEP_INSTALL_DIR)/lib -lfreetype" \
 
 clean_cairo:
 	cd vendor/cairo && ./autogen.sh && make distclean || true

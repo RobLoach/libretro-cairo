@@ -10,3 +10,15 @@
 	path = vendor/pixman
 	url = https://anongit.freedesktop.org/git/pixman.git
 	ignore = dirty
+[submodule "vendor/libpng"]
+	path = vendor/libpng
+	url = https://github.com/glennrp/libpng.git
+	ignore = dirty
+[submodule "vendor/freetype2"]
+	path = vendor/freetype2
+	url = http://git.sv.nongnu.org/r/freetype/freetype2.git
+	ignore = dirty
+[submodule "vendor/fontconf"]
+	path = vendor/fontconf
+	url = https://github.com/freedesktop/fontconfig.git
+	ignore = dirty
