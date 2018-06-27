@@ -59,6 +59,10 @@ $(DEP_INSTALL_DIR)/lib/libpng.a:
 		./autogen.sh && \
 		./configure $(host_opts) --enable-shared=no --enable-static=yes \
 			--enable-hardware-optimizations=no \
+			--enable-arm-neon=no \
+			--enable-mips-msa=no \
+			--enable-intel-sse=no \
+			--enable-powerpc-vsx=no \
 			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
@@ -101,10 +105,13 @@ $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_IN
 			#FREETYPE_CFLAGS="-I$(DEP_INSTALL_DIR)/include/freetype2" FREETYPE_LIBS="-L$(DEP_INSTALL_DIR)/lib -lfreetype" \
 
 clean_cairo:
-	cd vendor/cairo && ./autogen.sh && make distclean || true
+	cd vendor/cairo && make distclean || true
 
 clean_pixman:
-	cd vendor/pixman && ./autogen.sh && make distclean || true
+	cd vendor/pixman && make distclean || true
+
+clean_png:
+	cd vendor/libpng && make distclean || true
 
 clean: clean_cairo clean_pixman
 	rm -rf $(TARGET) $(OBJECTS) $(DEP_INSTALL_DIR)
