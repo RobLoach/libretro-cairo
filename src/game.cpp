@@ -14,6 +14,7 @@ int SCREEN_HEIGHT = 480;
 static cairo_surface_t *surface = NULL;
 static cairo_surface_t *static_surface = NULL;
 static cairo_t *ctx = NULL;
+static cairo_surface_t * image = NULL;
 
 
 static uint16_t *frame_buf;
@@ -38,6 +39,8 @@ void game_init()
 
    //init_game();
    //start_game();
+
+   image = cairo_image_surface_create_from_png("src/helloworld.png");
 }
 
 void game_deinit()
@@ -54,6 +57,7 @@ void game_deinit()
    cairo_destroy(ctx);
    cairo_surface_destroy(surface);
    cairo_surface_destroy(static_surface);
+   cairo_surface_destroy(image);
 
    ctx     = NULL;
    surface = NULL;
@@ -106,6 +110,10 @@ void game_render() {
    cairo_set_source_rgb (ctx, 0, 0, 0);
    cairo_set_line_width (ctx, 2.56);
    cairo_stroke (ctx);
+
+
+  cairo_set_source_surface(ctx, image, 350, 20);
+  cairo_paint(ctx);  
 
    // Set the frame buffer.
    video_cb(frame_buf, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_PITCH);
