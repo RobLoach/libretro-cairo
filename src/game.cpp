@@ -40,7 +40,7 @@ void game_init()
    //init_game();
    //start_game();
 
-   image = cairo_image_surface_create_from_png("vendor/cairo/doc/tutorial/slides/rendering-model.png");
+   image = cairo_image_surface_create_from_png("src/helloworld.png");
 }
 
 void game_deinit()
@@ -112,7 +112,7 @@ void game_render() {
    cairo_stroke (ctx);
 
 
-  cairo_set_source_surface(ctx, image, 10, 10);
+  cairo_set_source_surface(ctx, image, 350, 20);
   cairo_paint(ctx);  
 
    // Set the frame buffer.
