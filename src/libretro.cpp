@@ -10,7 +10,7 @@
 #include "game.h"
 
 retro_log_printf_t log_cb;
-static retro_video_refresh_t video_cb;
+retro_video_refresh_t video_cb;
 
 retro_environment_t environ_cb;
 static retro_input_poll_t input_poll_cb;
@@ -80,7 +80,7 @@ void retro_set_environment(retro_environment_t cb) {
  * libretro callback; Updates the core option variables.
  */
 static void update_variables(void) {
-	std::cout << "[ChaiLove] [libretro] update_variables()" << std::endl;
+	std::cout << "update_variables()" << std::endl;
 }
 
 #ifdef __cplusplus
@@ -91,10 +91,10 @@ extern "C" {
  */
 void init_descriptors() {
 	struct retro_input_descriptor desc[] = {
-		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "D-Pad Left" },
-		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "D-Pad Up" },
-		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "D-Pad Down" },
-		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "D-Pad Right" },
+		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "Left" },
+		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "Up" },
+		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "Down" },
+		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "Right" },
 		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B, "B" },
 		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A, "A" },
 		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X, "X" },
@@ -104,10 +104,10 @@ void init_descriptors() {
 		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Select" },
 		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START, "Start" },
 
-		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "D-Pad Left" },
-		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "D-Pad Up" },
-		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "D-Pad Down" },
-		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "D-Pad Right" },
+		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "Left" },
+		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "Up" },
+		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "Down" },
+		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "Right" },
 		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B, "B" },
 		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A, "A" },
 		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X, "X" },
@@ -117,10 +117,10 @@ void init_descriptors() {
 		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Select" },
 		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START, "Start" },
 
-		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "D-Pad Left" },
-		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "D-Pad Up" },
-		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "D-Pad Down" },
-		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "D-Pad Right" },
+		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "Left" },
+		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "Up" },
+		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "Down" },
+		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "Right" },
 		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B, "B" },
 		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A, "A" },
 		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X, "X" },
@@ -130,10 +130,10 @@ void init_descriptors() {
 		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Select" },
 		{ 2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START, "Start" },
 
-		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "D-Pad Left" },
-		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "D-Pad Up" },
-		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "D-Pad Down" },
-		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "D-Pad Right" },
+		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "Left" },
+		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "Up" },
+		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "Down" },
+		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "Right" },
 		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B, "B" },
 		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A, "A" },
 		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X, "X" },
@@ -143,10 +143,10 @@ void init_descriptors() {
 		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Select" },
 		{ 3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START, "Start" },
 
-		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "D-Pad Left" },
-		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "D-Pad Up" },
-		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "D-Pad Down" },
-		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "D-Pad Right" },
+		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "Left" },
+		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "Up" },
+		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "Down" },
+		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "Right" },
 		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B, "B" },
 		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A, "A" },
 		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X, "X" },
@@ -168,24 +168,14 @@ void init_descriptors() {
  * libretro callback; Retrieve information about the core.
  */
 void retro_get_system_info(struct retro_system_info *info) {
-	memset(info, 0, sizeof(*info));
-
-	// The name of the core.
-	info->library_name = "Cairo";
 #ifndef GIT_VERSION
 #define GIT_VERSION ""
 #endif
-
-	// The ChaiLove version.
+	memset(info, 0, sizeof(*info));
+	info->library_name = "Cairo Test";
 	info->library_version  = "0.0.1" GIT_VERSION;
-
-	// When loading a game, request the full path to the game.
 	info->need_fullpath = true;
-
-	// File extensions that are used.
 	info->valid_extensions = "cairo";
-
-	// Do not extract .zip files.
 	info->block_extract = true;
 }
 
@@ -193,9 +183,9 @@ void retro_get_system_info(struct retro_system_info *info) {
  * libretro callback; Set the audio/video settings.
  */
 void retro_get_system_av_info(struct retro_system_av_info *info) {
-	std::cout << "[ChaiLove] retro_get_system_av_info" << std::endl;
-	unsigned int width = 640;
-	unsigned int height = 480;
+	std::cout << "retro_get_system_av_info" << std::endl;
+	unsigned int width = 1920;
+	unsigned int height = 1080;
 
 	info->geometry.base_width   = width;
 	info->geometry.base_height  = height;
@@ -208,7 +198,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info) {
 }
 
 void retro_set_controller_port_device(unsigned port, unsigned device) {
-	std::cout << "[ChaiLove] retro_set_controller_port_device" << std::endl;
+	std::cout << "retro_set_controller_port_device" << std::endl;
 	(void)port;
 	(void)device;
 }
@@ -283,7 +273,7 @@ bool retro_load_game(const struct retro_game_info *info) {
  * libretro callback; Loads the given special game.
  */
 bool retro_load_game_special(unsigned game_type, const struct retro_game_info *info, size_t num_info) {
-	std::cout << "[ChaiLove] retro_load_game_special" << std::endl;
+	std::cout << "retro_load_game_special" << std::endl;
 	(void)game_type;
 	(void)info;
 	(void)num_info;
@@ -294,7 +284,7 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
  * libretro callback; Unload the current game.
  */
 void retro_unload_game(void) {
-	std::cout << "[ChaiLove] retro_unload_game()" << std::endl;
+	std::cout << "retro_unload_game()" << std::endl;
 }
 
 /**
@@ -329,33 +319,29 @@ size_t retro_get_memory_size(unsigned id) {
  * libretro callback; Initialize the core.
  */
 void retro_init(void) {
-	// Pixel Format
-	//enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
-	//if (!ChaiLove::environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt)) {
-	//	std::cout << "[ChaiLove] Pixel format XRGB8888 not supported by platform, cannot use." << std::endl;
-	//}
-	std::cout << "[ChaiLove] retro_init()" << std::endl;
+
+	std::cout << "retro_init()" << std::endl;
+	game_init();
 }
 
 /**
  * libretro callback; Deinitialize the core.
  */
 void retro_deinit(void) {
-	std::cout << "[ChaiLove] retro_deinit()" << std::endl;
+	std::cout << "retro_deinit()" << std::endl;
+	game_deinit();
 }
 
 /**
  * libretro callback; The frontend requested to reset the game.
  */
 void retro_reset(void) {
-	std::cout << "[ChaiLove] retro_reset()" << std::endl;
+	std::cout << "retro_reset()" << std::endl;
 }
 
 /**
  * libretro callback; Run a game loop in the core.
  */
 void retro_run(void) {
-	std::cout << "[ChaiLove] retro_run()" << std::endl;
 	game_render();
-
 }

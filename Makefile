@@ -16,7 +16,7 @@ DEP_INSTALL_DIR := $(CORE_DIR)/tmp
 
 CFLAGS += -I$(DEP_INSTALL_DIR)/include
 LFLAGS := -L$(DEP_INSTALL_DIR)/lib
-LIBS := $(DEP_INSTALL_DIR)/lib/libcairo.a $(DEP_INSTALL_DIR)/lib/libpixman-1.a -lm
+LIBS := $(DEP_INSTALL_DIR)/lib/libcairo.a $(DEP_INSTALL_DIR)/lib/libpixman-1.a -lpthread -lm
 
 ifeq ($(platform), win)
 	LIBS += -lgdi32 -lmsimg32
@@ -63,6 +63,7 @@ $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a
 			--enable-wgl=no --enable-glx=no --enable-egl=no --disable-valgrind \
 			--enable-silent-rules --enable-png=no  --enable-xlib=no \
 			--enable-drm=no --enable-xcb-drm=no --enable-drm-xr=no --disable-lto  \
+			--enable-qt=no \
 			$(with_fpic) CFLAGS="-fno-lto" \
 			pixman_CFLAGS="-I$(DEP_INSTALL_DIR)/include/pixman-1" pixman_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpixman-1" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
