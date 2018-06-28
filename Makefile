@@ -37,6 +37,9 @@ all: $(TARGET)
 
 deps: $(DEP_INSTALL_DIR)/lib/libcairo.a
 
+vendor/libretro-common/include/libretro.h:
+	@git submodule update --init --recursive
+
 $(OBJECTS): vendor/libretro-common/include/libretro.h deps
 
 $(TARGET): $(OBJECTS)
@@ -125,9 +128,6 @@ clean: clean_cairo clean_pixman
 	git submodule update --init --recursive
 	git submodule foreach --recursive git clean -xfd
 	git submodule foreach --recursive git reset --hard HEAD
-
-vendor/libretro-common/include/libretro.h:
-	@git submodule update --init --recursive
 
 PREFIX := /usr
 INSTALLDIR := $(PREFIX)/lib/libretro

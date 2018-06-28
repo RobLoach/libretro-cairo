@@ -4,7 +4,6 @@
 #include <sstream>
 #include <cstring>
 #include <iostream>
-#include <cstdarg>
 #include "libretro.h"
 
 #include "game.h"
@@ -18,20 +17,6 @@ static retro_input_state_t input_state_cb;
 
 float frame_time = 0;
 
-
-
-static void fallback_log(enum retro_log_level level, const char *fmt, ...)
-{
-   va_list va;
-
-   (void)level;
-
-   va_start(va, fmt);
-   vfprintf(stderr, fmt, va);
-   va_end(va);
-}
-
-
 void retro_set_video_refresh(retro_video_refresh_t cb) {
 	video_cb = cb;
 }
@@ -44,9 +29,9 @@ void retro_set_input_state(retro_input_state_t cb) {
 	input_state_cb = cb;
 }
 
-
 void retro_set_audio_sample(retro_audio_sample_t cb)
 {
+	std::cout << "retro_set_audio_sample" << std::endl;
 #if 0
    audio_cb = cb;
 #endif
@@ -54,6 +39,7 @@ void retro_set_audio_sample(retro_audio_sample_t cb)
 
 void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb)
 {
+	std::cout << "retro_set_audio_sample_batch" << std::endl;
 #if 0
    audio_batch_cb = cb;
 #endif
@@ -63,17 +49,13 @@ void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb)
  * libretro callback; Sets up the environment based on the system variables.
  */
 void retro_set_environment(retro_environment_t cb) {
+	std::cout << "retro_set_environment" << std::endl;
    struct retro_log_callback logging;
    bool no_rom = true;
 
    environ_cb = cb;
 
    cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &no_rom);
-
-   if (cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &logging))
-      log_cb = logging.log;
-   else
-      log_cb = fallback_log;
 }
 
 /**
@@ -104,6 +86,7 @@ void init_descriptors() {
 		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Select" },
 		{ 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START, "Start" },
 
+		/*
 		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "Left" },
 		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "Up" },
 		{ 1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "Down" },
@@ -155,9 +138,9 @@ void init_descriptors() {
 		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R, "Right Shoulder" },
 		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Select" },
 		{ 4, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START, "Start" },
+		*/
 		{ 0 },
 	};
-
 	environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
 }
 #ifdef __cplusplus
@@ -168,6 +151,7 @@ void init_descriptors() {
  * libretro callback; Retrieve information about the core.
  */
 void retro_get_system_info(struct retro_system_info *info) {
+	std::cout << "retro_get_system_info" << std::endl;
 #ifndef GIT_VERSION
 #define GIT_VERSION ""
 #endif
@@ -207,11 +191,8 @@ void retro_set_controller_port_device(unsigned port, unsigned device) {
  * libretro callback; Return the amount of bytes required to save a state.
  */
 size_t retro_serialize_size(void) {
-	// Save states will be 10 kilobytes.
-	return 10000;
+	return 0;
 }
-
-
 
 /**
  * libretro callback; Serialize the current state to save a slot.
@@ -254,19 +235,20 @@ void frame_time_cb(retro_usec_t usec) {
  * libretro callback; Load the given game.
  */
 bool retro_load_game(const struct retro_game_info *info) {
-   struct retro_frame_time_callback frame_cb;
-   init_descriptors();
+	std::cout << "retro_load_game" << std::endl;
+	struct retro_frame_time_callback frame_cb;
+	init_descriptors();
 
-   if (!game_init_pixelformat())
-      return false;
+	if (!game_init_pixelformat())
+		return false;
 
-   frame_cb.callback  = frame_time_cb;
-   frame_cb.reference = 1000000 / 60;
-   frame_cb.callback(frame_cb.reference);
-   environ_cb(RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK, &frame_cb);
+	frame_cb.callback  = frame_time_cb;
+	frame_cb.reference = 1000000 / 60;
+	frame_cb.callback(frame_cb.reference);
+	environ_cb(RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK, &frame_cb);
 
-   (void)info;
-   return true;
+	(void)info;
+	return true;
 }
 
 /**
@@ -285,12 +267,14 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
  */
 void retro_unload_game(void) {
 	std::cout << "retro_unload_game()" << std::endl;
+	game_unload();
 }
 
 /**
  * libretro callback; Retrieve the active region.
  */
 unsigned retro_get_region(void) {
+	std::cout << "retro_get_region" << std::endl;
 	return RETRO_REGION_NTSC;
 }
 
@@ -298,6 +282,7 @@ unsigned retro_get_region(void) {
  * libretro callback; Get the libretro API version.
  */
 unsigned retro_api_version(void) {
+	std::cout << "retro_api_version" << std::endl;
 	return RETRO_API_VERSION;
 }
 
@@ -319,7 +304,6 @@ size_t retro_get_memory_size(unsigned id) {
  * libretro callback; Initialize the core.
  */
 void retro_init(void) {
-
 	std::cout << "retro_init()" << std::endl;
 	game_init();
 }
@@ -337,11 +321,18 @@ void retro_deinit(void) {
  */
 void retro_reset(void) {
 	std::cout << "retro_reset()" << std::endl;
+	game_reset();
 }
 
+bool first = false;
 /**
  * libretro callback; Run a game loop in the core.
  */
 void retro_run(void) {
+	if (!first) {
+		first = true;
+
+	std::cout << "retro_run" << std::endl;
+	}
 	game_render();
 }

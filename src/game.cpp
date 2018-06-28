@@ -114,8 +114,15 @@ void game_render() {
 
    // Draw the image.
    cairo_set_source_surface(ctx, image, 400, 80);
-   cairo_paint(ctx);  
+   cairo_paint(ctx);
 
    // Set the frame buffer.
    video_cb(frame_buf, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_PITCH);
+}
+void game_reset() {
+
+}
+
+void game_unload() {
+
 }
