@@ -64,7 +64,7 @@ $(DEP_INSTALL_DIR)/lib/libz.a:
 
 $(DEP_INSTALL_DIR)/lib/libpng.a: $(DEP_INSTALL_DIR)/lib/libz.a
 	cd $(CORE_DIR)/vendor/libpng && \
-		./autogen.sh && \
+		./autogen.sh; \
 		./configure $(host_opts) --enable-shared=no --enable-static=yes \
 			--enable-hardware-optimizations=no \
 			--enable-arm-neon=no \
