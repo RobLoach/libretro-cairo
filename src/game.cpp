@@ -1,12 +1,16 @@
 #include <iostream>
-
+#include <string>
 #include "game.h"
 #include "libretro.h"
+
+#include <cstdio>
 
 #include <cairo/cairo.h>
 
 #include <cstring>
 #include <cstdlib>
+
+#include "audio/audio_mixer.h"
 
 int SCREEN_PITCH = 0;
 int SCREEN_WIDTH = 640;
@@ -17,62 +21,97 @@ static cairo_surface_t *static_surface = NULL;
 static cairo_t *ctx = NULL;
 static cairo_surface_t * image = NULL;
 
-
 static uint16_t *frame_buf;
 extern retro_environment_t environ_cb;
 extern retro_video_refresh_t video_cb;
 
+audio_mixer_sound_t *wavfile = NULL;
+audio_mixer_voice_t * voice1 = NULL;
+
+void* ReadFile(const std::string& name, int &size)
+{
+    FILE *file;
+    void *buffer;
+    unsigned long fileLen;
+
+    //Open file
+    file = fopen(name.c_str(), "rb");
+    if (!file)
+    {
+        fprintf(stderr, "Unable to open file %s", name.c_str());
+        size = 0;
+        return NULL;
+    }
+
+    //Get file length
+    fseek(file, 0, SEEK_END);
+    fileLen=ftell(file);
+    size = fileLen + 1;
+    fseek(file, 0, SEEK_SET);
+
+    //Allocate memory
+    buffer=malloc(fileLen+1);
+    if (!buffer)
+    {
+        fprintf(stderr, "Memory error!");
+                                fclose(file);
+        size = 0;
+        return NULL;
+    }
+
+    //Read file contents into buffer
+    int readsize = fread(buffer, fileLen, 1, file);
+    std::cout << "Blocks read: " << readsize << std::endl;
+    fclose(file);
+    return buffer;
+}
+
+void game_load() {
+    // Load the image.
+    image = cairo_image_surface_create_from_png("test/mario.png");
+
+    // Load the wav file.
+    int size;
+    void* buffer = ReadFile("test/test.wav", size);
+    wavfile = audio_mixer_load_wav(buffer, size);
+    free(buffer);
+
+    // Play the wav file.
+    voice1 = audio_mixer_play(wavfile, true, 1.0, NULL);
+}
 
 void game_init()
 {
-	SCREEN_PITCH = cairo_format_stride_for_width(CAIRO_FORMAT_RGB16_565, SCREEN_WIDTH);
+    SCREEN_PITCH = cairo_format_stride_for_width(CAIRO_FORMAT_RGB16_565, SCREEN_WIDTH);
 
-   frame_buf = (uint16_t*)calloc(SCREEN_HEIGHT, SCREEN_PITCH);
+    frame_buf = (uint16_t*)calloc(SCREEN_HEIGHT, SCREEN_PITCH);
 
-   surface = cairo_image_surface_create_for_data(
-            (unsigned char*)frame_buf, CAIRO_FORMAT_RGB16_565, SCREEN_WIDTH, SCREEN_HEIGHT,
-            SCREEN_PITCH);
+    surface = cairo_image_surface_create_for_data(
+        (unsigned char*)frame_buf, CAIRO_FORMAT_RGB16_565, SCREEN_WIDTH, SCREEN_HEIGHT,
+        SCREEN_PITCH);
 
-   ctx = cairo_create(surface);
-
-   //init_luts();
-   //init_static_surface();
-
-   //init_game();
-   //start_game();
-
-   image = cairo_image_surface_create_from_png("test/mario.png");
+    ctx = cairo_create(surface);
 }
 
 void game_deinit()
 {
-	/*
-   int i;
+    cairo_destroy(ctx);
+    cairo_surface_destroy(surface);
+    cairo_surface_destroy(static_surface);
+    cairo_surface_destroy(image);
 
-   for (i = 0; i < 13; i++)
-   {
-      cairo_pattern_destroy(color_lut[i]);
-      color_lut[i] = NULL;
-   }*/
+    ctx     = NULL;
+    surface = NULL;
+    static_surface = NULL;
 
-   cairo_destroy(ctx);
-   cairo_surface_destroy(surface);
-   cairo_surface_destroy(static_surface);
-   cairo_surface_destroy(image);
-
-   ctx     = NULL;
-   surface = NULL;
-   static_surface = NULL;
-
-   if (frame_buf)
-      free(frame_buf);
-   frame_buf = NULL;
+    if (frame_buf)
+        free(frame_buf);
+    frame_buf = NULL;
 }
 
 int game_init_pixelformat() {
    enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
-   if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
-   {
+   if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt)) {
       std::cout << "RGB565 is not supported.\n";
       return 0;
    }
@@ -120,9 +159,10 @@ void game_render() {
    video_cb(frame_buf, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_PITCH);
 }
 void game_reset() {
-
+    x = 0;
 }
 
 void game_unload() {
-
+   audio_mixer_stop(voice1);
+   audio_mixer_destroy(wavfile);
 }

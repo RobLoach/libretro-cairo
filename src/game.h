@@ -11,4 +11,7 @@ void game_reset();
 void game_render();
 int game_init_pixelformat();
 void game_unload();
+
+void game_load();
+
 #endif /* GAME_H */

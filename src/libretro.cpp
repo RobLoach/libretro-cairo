@@ -5,6 +5,7 @@
 #include <cstring>
 #include <iostream>
 #include "libretro.h"
+#include "audio/audio_mixer.h"
 
 #include "game.h"
 
@@ -14,6 +15,8 @@ retro_video_refresh_t video_cb;
 retro_environment_t environ_cb;
 static retro_input_poll_t input_poll_cb;
 static retro_input_state_t input_state_cb;
+retro_audio_sample_t audio_cb = NULL;
+retro_audio_sample_batch_t audio_batch_cb = NULL;
 
 float frame_time = 0;
 
@@ -32,17 +35,13 @@ void retro_set_input_state(retro_input_state_t cb) {
 void retro_set_audio_sample(retro_audio_sample_t cb)
 {
 	std::cout << "retro_set_audio_sample" << std::endl;
-#if 0
-   audio_cb = cb;
-#endif
+	audio_cb = cb;
 }
 
 void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb)
 {
 	std::cout << "retro_set_audio_sample_batch" << std::endl;
-#if 0
-   audio_batch_cb = cb;
-#endif
+	audio_batch_cb = cb;
 }
 
 /**
@@ -248,6 +247,8 @@ bool retro_load_game(const struct retro_game_info *info) {
 	environ_cb(RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK, &frame_cb);
 
 	(void)info;
+
+	game_load();
 	return true;
 }
 
@@ -305,6 +306,7 @@ size_t retro_get_memory_size(unsigned id) {
  */
 void retro_init(void) {
 	std::cout << "retro_init()" << std::endl;
+	audio_mixer_init(44100);
 	game_init();
 }
 
@@ -314,6 +316,7 @@ void retro_init(void) {
 void retro_deinit(void) {
 	std::cout << "retro_deinit()" << std::endl;
 	game_deinit();
+	audio_mixer_done();
 }
 
 /**
@@ -328,11 +331,36 @@ bool first = false;
 /**
  * libretro callback; Run a game loop in the core.
  */
+
+
+
+void convert_float_to_s16(int16_t *out,
+	const float *in, size_t samples)
+{
+	size_t i = 0;
+	for (; i < samples; i++)
+	{
+		int32_t val = (int32_t)(in[i] * 0x8000);
+		out[i] = (val > 0x7FFF) ? 0x7FFF :
+			(val < -0x8000 ? -0x8000 : (int16_t)val);
+	}
+}
+
+
 void retro_run(void) {
 	if (!first) {
 		first = true;
-
-	std::cout << "retro_run" << std::endl;
+		std::cout << "retro_run" << std::endl;
 	}
+
+	// Update the audio.
+	int BUFSIZE = 44100/60;
+	float samples[BUFSIZE * 2] = { 0 };
+	int16_t samples2[2 * BUFSIZE] = { 0 };
+	audio_mixer_mix(samples, BUFSIZE, 1.0, false);
+	convert_float_to_s16(samples2,samples, 2 * BUFSIZE);
+	audio_batch_cb(samples2, BUFSIZE);
+
+	// Render the game.
 	game_render();
 }
