@@ -61,7 +61,6 @@ void* ReadFile(const std::string& name, int &size)
 
     //Read file contents into buffer
     int readsize = fread(buffer, fileLen, 1, file);
-    std::cout << "Blocks read: " << readsize << std::endl;
     fclose(file);
     return buffer;
 }

@@ -8,6 +8,8 @@ matrix:
       sudo: required
     - os: osx
       osx_image: xcode8.3
+  allow_failures:
+    - os: osx
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get -qq update ; fi
@@ -15,6 +17,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90 ; fi
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90 ; fi
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then export PATH=/usr/lib/binutils-2.26/bin:${PATH} ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install fontconfig freetype; fi
 
 addons:
   apt:
@@ -36,12 +39,12 @@ script:
   - ./configure
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then make ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make platform=osx -j2 ; fi
-  - #make test
+  #- make test
 
 cache:
     apt: true
-    directories:
-    - vendor
+    #directories:
+    #- vendor
 
 notifications:
   email: false

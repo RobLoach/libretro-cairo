@@ -16,7 +16,7 @@ DEP_INSTALL_DIR := $(CORE_DIR)/tmp
 
 CFLAGS += -I$(DEP_INSTALL_DIR)/include
 LFLAGS := -L$(DEP_INSTALL_DIR)/lib
-LIBS := -L$(DEP_INSTALL_DIR)/lib -lcairo -lpixman-1 -lpng -lfreetype -lfontconfig -lz -lpthread -lm
+LIBS := -L$(DEP_INSTALL_DIR)/lib -lcairo -lpixman-1 -lpng -lfreetype -lfontconfig -lz -lm
 
 ifeq ($(platform), win)
 	LIBS += -lgdi32 -lmsimg32
@@ -51,10 +51,17 @@ $(TARGET): $(OBJECTS)
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-$(DEP_INSTALL_DIR)/lib/libpixman-1.a:
+$(DEP_INSTALL_DIR)/lib/libpixman-1.a: $(DEP_INSTALL_DIR)/lib/libpng.a
 	cd $(CORE_DIR)/vendor/pixman && \
 		./autogen.sh && \
-		./configure $(host_opts) --enable-shared=no --enable-static=yes $(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
+		./configure $(host_opts) --enable-shared=no --enable-static=yes \
+			--enable-libpng \
+			--disable-gtk \
+			--disable-loongson-mmi \
+			LIBPNG_CFLAGS="-I$(DEP_INSTALL_DIR)/include" LIBPNG_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
+			CPPFLAGS="-I$(DEP_INSTALL_DIR)/include" \
+			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
 $(DEP_INSTALL_DIR)/lib/libz.a:
@@ -67,50 +74,79 @@ $(DEP_INSTALL_DIR)/lib/libpng.a: $(DEP_INSTALL_DIR)/lib/libz.a
 		./autogen.sh; \
 		./configure $(host_opts) --enable-shared=no --enable-static=yes \
 			--enable-hardware-optimizations=no \
-			--enable-arm-neon=no \
-			--enable-mips-msa=no \
-			--enable-intel-sse=no \
-			--enable-powerpc-vsx=no \
+			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
+			CPPFLAGS="-I$(DEP_INSTALL_DIR)/include" \
 			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
+# Font Config
+# Requires: uuid-dev
 #$(DEP_INSTALL_DIR)/lib/libfontconfig.a: $(DEP_INSTALL_DIR)/lib/libfreetype.a
 #	cd $(CORE_DIR)/vendor/fontconf && \
 #		./autogen.sh && \
 #		./configure $(host_opts) --enable-shared=no --enable-static=yes \
-#			--disable-docs --disable-nls --enable-iconv \
+#			--enable-docs=no \
 #			FREETYPE_CFLAGS="-I$(DEP_INSTALL_DIR)/include/freetype2" FREETYPE_LIBS="-L$(DEP_INSTALL_DIR)/lib -lfreetype" \
+#			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
 #			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 #		$(MAKE) && $(MAKE) install
 
-#$(DEP_INSTALL_DIR)/lib/libfreetype.a: $(DEP_INSTALL_DIR)/lib/libpng.a
+#$(DEP_INSTALL_DIR)/lib/libfreetype.a: $(DEP_INSTALL_DIR)/lib/libpng.a $(DEP_INSTALL_DIR)/lib/libz.a
 #	cd $(CORE_DIR)/vendor/freetype2 && \
 #		./autogen.sh && \
 #		./configure $(host_opts) --enable-shared=no --enable-static=yes \
-#			--with-zlib=no --with-bzip2=no --with-png=yes --with-harfbuzz=no \
-#			--with-fsspec=no --with-fsref=no --with-quickdraw-toolbox=no --with-quickdraw-carbon=no --with-ats=no \
-#			--with-old-mac-fonts=no \
-#			LIBPNG_CFLAGS="-I$(DEP_INSTALL_DIR)/include/libpng16" LIBPNG_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+#			--with-zlib=yes \
+#			--with-bzip2=no \
+#			--with-png=yes \
+#			--with-harfbuzz=no \
+#			ZLIB_CFLAGS="-I$(DEP_INSTALL_DIR)/include" ZLIB_LIBS="-L$(DEP_INSTALL_DIR)/lib -lz" \
+#			LIBPNG_CFLAGS="-I$(DEP_INSTALL_DIR)/include -I$(DEP_INSTALL_DIR)/include" LIBPNG_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+#			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
+#			CPPFLAGS="-I$(DEP_INSTALL_DIR)/include" \
 #			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
 #		$(MAKE) && $(MAKE) install
 
-$(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a
+$(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a # $(DEP_INSTALL_DIR)/lib/libfreetype.a
 	cd $(CORE_DIR)/vendor/cairo && \
 		./autogen.sh && \
-		./configure $(host_opts) --enable-static=yes --enable-ft=yes --enable-shared=no \
-			--enable-gobject=no --enable-trace=no --enable-interpreter=no \
-			--enable-symbol-lookup=no --enable-svg=no --enable-pdf=no --enable-ps=no \
-			--enable-wgl=no --enable-glx=no --enable-egl=no --disable-valgrind \
-			--enable-silent-rules --enable-png=yes --enable-xlib=no \
-			--enable-drm=no --enable-xcb-drm=no --enable-drm-xr=no --disable-lto  \
+		./configure $(host_opts) --enable-static=yes --enable-shared=no \
+			--enable-ft=yes \
+			--enable-gtk-doc=no \
+			--enable-gobject=no \
+			--enable-trace=no \
+			--enable-interpreter=no \
+			--enable-symbol-lookup=no \
+			--enable-svg=no \
+			--enable-pdf=no \
+			--enable-ps=no \
+			--enable-glib=no \
+			--enable-egl=no \
+			--enable-glx=no \
+			--enable-wgl=no \
+			--enable-script=no \
+			--enable-valgrind=no \
+			--enable-xml=no \
+			--enable-silent-rules \
+			--enable-png=yes \
+			--enable-xlib=no \
+			--enable-pthread=no \
+			--enable-drm=no \
+			--enable-xcb-drm=no \
+			--enable-drm-xr=no \
+			--enable-lto=no \
 			--enable-qt=no \
-			$(with_fpic) CFLAGS="-fno-lto" \
+			--enable-full-testing=no \
+			--with-x=no \
+			$(with_fpic) CFLAGS="-fno-lto -DCAIRO_NO_MUTEX=1 -Wl,--verbose" \
 			pixman_CFLAGS="-I$(DEP_INSTALL_DIR)/include/pixman-1" pixman_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpixman-1" \
-			png_CFLAGS="-I$(DEP_INSTALL_DIR)/include/libpng16" png_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+			png_CFLAGS="-I$(DEP_INSTALL_DIR)/include" png_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
+			CPPFLAGS="-I$(DEP_INSTALL_DIR)/include" \
 			--prefix=$(DEP_INSTALL_DIR) && \
 		$(MAKE) && $(MAKE) install
 
 			#FREETYPE_CFLAGS="-I$(DEP_INSTALL_DIR)/include/freetype2" FREETYPE_LIBS="-L$(DEP_INSTALL_DIR)/lib -lfreetype" \
+			#FONTCONFIG_CFLAGS="-I$(DEP_INSTALL_DIR)/include" FREETYPE_LIBS="-L$(DEP_INSTALL_DIR)/lib -lfontconfig" \
 
 clean_cairo:
 	cd vendor/cairo && make distclean || true
@@ -128,6 +164,10 @@ clean: clean_cairo clean_pixman
 	git submodule update --init --recursive
 	git submodule foreach --recursive git clean -xfd
 	git submodule foreach --recursive git reset --hard HEAD
+
+versions: vendor/libretro-common/include/libretro.h
+	@git submodule foreach 'git describe --exact-match --tags $(git log -n1 --pretty='%h') || true'
+
 
 PREFIX := /usr
 INSTALLDIR := $(PREFIX)/lib/libretro
