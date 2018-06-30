@@ -4,7 +4,12 @@ SOURCES_CXX := $(wildcard \
 )
 
 # libretro-common
-FLAGS += -I$(CORE_DIR)/vendor/libretro-common/include
+FLAGS += -I$(CORE_DIR)/vendor/libretro-common/include \
+    -I$(CORE_DIR)/tmp/include
+
+ifneq (,$(findstring msvc2003,$(platform)))
+INCFLAGS += -I$(CORE_DIR)/vendor/libretro-common/include/compat/msvc
+endif
 
 # libretro-common audio
 SOURCES_C += $(CORE_DIR)/vendor/libretro-common/audio/audio_mixer.c \

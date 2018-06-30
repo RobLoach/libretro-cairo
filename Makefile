@@ -43,7 +43,7 @@ vendor/libretro-common/include/libretro.h:
 $(OBJECTS): vendor/libretro-common/include/libretro.h deps
 
 $(TARGET): $(OBJECTS)
-	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
+	$(CXX) $(INCLUDES) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 %.o: %.cpp
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
