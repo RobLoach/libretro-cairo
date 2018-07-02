@@ -26,3 +26,6 @@
 	path = vendor/zlib
 	url = https://github.com/madler/zlib.git
 	ignore = dirty
+[submodule "vendor/noarch"]
+	path = vendor/noarch
+	url = https://github.com/RobLoach/noarch.git
