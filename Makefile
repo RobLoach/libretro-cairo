@@ -168,6 +168,11 @@ clean: clean_cairo clean_pixman
 versions: vendor/libretro-common/include/libretro.h
 	@git submodule foreach 'git describe --exact-match --tags $(git log -n1 --pretty='%h') || true'
 
+vendor/noarch/noarch: vendor/libretro-common/include/libretro.h
+	make -C vendor/noarch
+
+test: vendor/noarch/noarch $(TARGET)
+	retroarch -L $(TARGET)
 
 PREFIX := /usr
 INSTALLDIR := $(PREFIX)/lib/libretro
