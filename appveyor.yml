@@ -23,9 +23,9 @@ init:
 
 install:
   - git submodule update --init --recursive
-  - copy c:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin\mingw32-make.exe c:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin\make.exe
-  - cmd: set PATH=%PATH%;c:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
-  - path
+  #- copy c:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin\mingw32-make.exe c:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin\make.exe
+  #- cmd: set PATH=%PATH%;c:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
+  #- path
 
 before_build:
   - make --version
