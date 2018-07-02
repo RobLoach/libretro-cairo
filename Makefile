@@ -172,7 +172,7 @@ vendor/noarch/noarch: vendor/libretro-common/include/libretro.h
 	make -C vendor/noarch
 
 test: vendor/noarch/noarch $(TARGET)
-	retroarch -L $(TARGET)
+	vendor/noarch/noarch ./$(TARGET) $(TARGET)
 
 PREFIX := /usr
 INSTALLDIR := $(PREFIX)/lib/libretro
