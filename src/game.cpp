@@ -17,9 +17,6 @@ int SCREEN_PITCH = 0;
 int SCREEN_WIDTH = 640;
 int SCREEN_HEIGHT = 480;
 
-int framenum = 0;
-int num = 1;
-
 static cairo_surface_t *surface = NULL;
 static cairo_surface_t *static_surface = NULL;
 static cairo_t *ctx = NULL;
@@ -70,8 +67,8 @@ void* ReadFile(const std::string& name, int &size)
 }
 
 void game_load() {
-    // Load the image.
-    image = cairo_image_surface_create_from_png("test/mario.png");
+    // Load the initial image.
+    image = cairo_image_surface_create_from_png("src/sprite.png");
 
     // Load the wav file.
     int size;
@@ -85,14 +82,12 @@ void game_load() {
 
 void game_init()
 {
+    // Create the screen context.
     SCREEN_PITCH = cairo_format_stride_for_width(CAIRO_FORMAT_RGB16_565, SCREEN_WIDTH);
-
     frame_buf = (uint16_t*)calloc(SCREEN_HEIGHT, SCREEN_PITCH);
-
     surface = cairo_image_surface_create_for_data(
         (unsigned char*)frame_buf, CAIRO_FORMAT_RGB16_565, SCREEN_WIDTH, SCREEN_HEIGHT,
         SCREEN_PITCH);
-
     ctx = cairo_create(surface);
 }
 
@@ -125,14 +120,19 @@ int game_init_pixelformat() {
 int x = 0, y = 50;
 
 void game_render() {
-    if (framenum++ > 50) {
-        num++;
-        framenum = 0;
-    }
 
    // Clear the screen.
    cairo_set_source_rgb(ctx, 78.0 / 255.0, 205.0 / 255.0, 196.0 / 255.0);
    cairo_paint(ctx);
+
+   // Benchmark
+  for (int sx = 0; sx < 10; sx++) {
+      for (int sy = 0; sy < 10; sy++) {
+         cairo_set_source_surface(ctx, image, sx * 60.0, sy * 40.0);
+         cairo_paint(ctx);
+      }
+  }
+
 
    // Draw a square.
    cairo_set_source_rgb(ctx, 255.0 / 255.0, 230.0 / 255.0, 109.0 / 255.0);
@@ -152,9 +152,7 @@ void game_render() {
 
    cairo_set_font_size (ctx, 20.0);
    cairo_move_to (ctx, 10.0, 440.0);
-   std::string msg = "Sprites: ";
-   msg += std::to_string(num) + "     - " + std::to_string(framenum);
-   cairo_text_path (ctx, msg.c_str());
+
    cairo_set_source_rgb (ctx, 0.5, 0.5, 1);
    //cairo_fill_preserve (ctx);
    //cairo_set_source_rgb (ctx, 0, 0, 0);
@@ -162,19 +160,17 @@ void game_render() {
    //cairo_stroke (ctx);
 
    // Draw the image.
-   cairo_set_source_surface(ctx, image, 400, 80);
-   cairo_paint(ctx);
+   //cairo_set_source_surface(ctx, image, 400, 80);
+   //cairo_paint(ctx);
 
-   for (int i = 0; i < num; i++) {
-        int thex = (rand() % 300) + 1;
-        int they = (rand() % 200) + 1;
-        cairo_set_source_surface(ctx, image, thex, they);
-        cairo_paint(ctx);
-   }
+
+
 
    // Set the frame buffer.
    video_cb(frame_buf, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_PITCH);
 }
+
+
 void game_reset() {
     x = 0;
 }
