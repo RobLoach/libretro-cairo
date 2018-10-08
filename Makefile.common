@@ -38,7 +38,7 @@ ifneq ($(STATIC_LINKING), 1)
         $(CORE_DIR)/vendor/libretro-common/vfs/*.c \
     )
     # Ensure the sinc_resampler_neon is available for ARM NEON devices.
-    OBJECTS += $(CORE_DIR)/vendor/libretro-common/audio/resampler/drivers/sinc_resampler_neon.o
+    #OBJECTS += $(CORE_DIR)/vendor/libretro-common/audio/resampler/drivers/sinc_resampler_neon.o
 endif
 
 # zlib
@@ -130,6 +130,7 @@ SOURCES_C += $(wildcard \
     $(CORE_DIR)/vendor/libretro-deps/pixman/*.c \
 )
 FLAGS += -I$(CORE_DIR)/vendor/libretro-deps/pixman
+FLAGS += -DPIXMAN_NO_TLS
 FLAGS += -DWANT_PIXMAN
 
 # Cairo
