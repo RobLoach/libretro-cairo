@@ -4,7 +4,7 @@ SOURCES_CXX := $(wildcard \
 )
 
 # libretro-common
-FLAGS += -I$(CORE_DIR)/tmp/include -I$(CORE_DIR)/src
+FLAGS += -I$(CORE_DIR)/tmp/include -I$(CORE_DIR)/src -I$(CORE_DIR)/vendor
 
 ifneq (,$(findstring msvc2003,$(platform)))
 INCFLAGS += -I$(CORE_DIR)/vendor/libretro-common/include/compat/msvc
@@ -126,9 +126,46 @@ SOURCES_C += \
     $(CORE_DIR)/vendor/libretro-deps/freetype/src/winfonts/winfnt.c
 
 # Pixman
-SOURCES_C += $(wildcard \
-    $(CORE_DIR)/vendor/pixman/pixman/*.c \
-)
+SOURCES_C += \
+    vendor/pixman/pixman/pixman-access-accessors.c \
+    vendor/pixman/pixman/pixman-access.c \
+    vendor/pixman/pixman/pixman-arm.c \
+    vendor/pixman/pixman/pixman-arm-neon.c \
+    vendor/pixman/pixman/pixman-arm-simd.c \
+    vendor/pixman/pixman/pixman-bits-image.c \
+    vendor/pixman/pixman/pixman.c \
+    vendor/pixman/pixman/pixman-combine32.c \
+    vendor/pixman/pixman/pixman-combine-float.c \
+    vendor/pixman/pixman/pixman-conical-gradient.c \
+    vendor/pixman/pixman/pixman-edge-accessors.c \
+    vendor/pixman/pixman/pixman-edge.c \
+    vendor/pixman/pixman/pixman-fast-path.c \
+    vendor/pixman/pixman/pixman-filter.c \
+    vendor/pixman/pixman/pixman-general.c \
+    vendor/pixman/pixman/pixman-glyph.c \
+    vendor/pixman/pixman/pixman-gradient-walker.c \
+    vendor/pixman/pixman/pixman-image.c \
+    vendor/pixman/pixman/pixman-implementation.c \
+    vendor/pixman/pixman/pixman-linear-gradient.c \
+    vendor/pixman/pixman/pixman-matrix.c \
+    vendor/pixman/pixman/pixman-mips.c \
+    vendor/pixman/pixman/pixman-mips-dspr2.c \
+    vendor/pixman/pixman/pixman-mmx.c \
+    vendor/pixman/pixman/pixman-noop.c \ \
+    vendor/pixman/pixman/pixman-ppc.c \
+    vendor/pixman/pixman/pixman-radial-gradient.c \
+    vendor/pixman/pixman/pixman-region16.c \
+    vendor/pixman/pixman/pixman-region32.c \
+    vendor/pixman/pixman/pixman-region.c \
+    vendor/pixman/pixman/pixman-solid-fill.c \
+    vendor/pixman/pixman/pixman-sse2.c \
+    vendor/pixman/pixman/pixman-ssse3.c \
+    vendor/pixman/pixman/pixman-timer.c \ \
+    vendor/pixman/pixman/pixman-trap.c \
+    vendor/pixman/pixman/pixman-utils.c \
+    vendor/pixman/pixman/pixman-x86.c
+#   vendor/pixman/pixman/pixman-vmx.c  TODO: Fix vmx?
+
 SOURCES_S += $(wildcard \
     $(CORE_DIR)/vendor/pixman/pixman/*.S \
 )
