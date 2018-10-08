@@ -151,10 +151,8 @@ SOURCES_C += \
     vendor/pixman/pixman/pixman-mips.c \
     vendor/pixman/pixman/pixman-mips-dspr2.c \
     vendor/pixman/pixman/pixman-mmx.c \
-    vendor/pixman/pixman/pixman-noop.c \ \
-    vendor/pixman/pixman/pixman-ppc.c \
+    vendor/pixman/pixman/pixman-noop.c \
     vendor/pixman/pixman/pixman-radial-gradient.c \
-    vendor/pixman/pixman/pixman-region16.c \
     vendor/pixman/pixman/pixman-region32.c \
     vendor/pixman/pixman/pixman-region.c \
     vendor/pixman/pixman/pixman-solid-fill.c \
@@ -165,6 +163,8 @@ SOURCES_C += \
     vendor/pixman/pixman/pixman-utils.c \
     vendor/pixman/pixman/pixman-x86.c
 #   vendor/pixman/pixman/pixman-vmx.c  TODO: Fix vmx?
+#   vendor/pixman/pixman/pixman-ppc.c
+#   vendor/pixman/pixman/pixman-region16.c
 
 SOURCES_S += $(wildcard \
     $(CORE_DIR)/vendor/pixman/pixman/*.S \
