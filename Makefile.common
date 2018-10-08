@@ -132,6 +132,7 @@ SOURCES_C += $(wildcard \
 FLAGS += -I$(CORE_DIR)/vendor/libretro-deps/pixman
 FLAGS += -DPIXMAN_NO_TLS
 FLAGS += -DWANT_PIXMAN
+FLAGS += -msse4.1
 
 # Cairo
 SOURCES_C += $(wildcard \
