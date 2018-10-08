@@ -4,31 +4,142 @@ SOURCES_CXX := $(wildcard \
 )
 
 # libretro-common
-FLAGS += -I$(CORE_DIR)/vendor/libretro-common/include \
-    -I$(CORE_DIR)/tmp/include
+FLAGS += -I$(CORE_DIR)/tmp/include
 
 ifneq (,$(findstring msvc2003,$(platform)))
 INCFLAGS += -I$(CORE_DIR)/vendor/libretro-common/include/compat/msvc
 endif
 
-# libretro-common audio
-SOURCES_C += $(CORE_DIR)/vendor/libretro-common/audio/audio_mixer.c \
-	$(CORE_DIR)/vendor/libretro-common/formats/wav/rwav.c \
-	$(CORE_DIR)/vendor/libretro-common/memmap/memalign.c \
-    $(CORE_DIR)/vendor/libretro-common/audio/resampler/audio_resampler.c \
-    $(CORE_DIR)/vendor/libretro-common/audio/resampler/drivers/sinc_resampler.c \
-    $(CORE_DIR)/vendor/libretro-common/audio/resampler/drivers/nearest_resampler.c \
-    $(CORE_DIR)/vendor/libretro-common/audio/resampler/drivers/null_resampler.c \
-    $(CORE_DIR)/vendor/libretro-common/features/features_cpu.c \
-    $(CORE_DIR)/vendor/libretro-common/compat/compat_strl.c \
-    $(CORE_DIR)/vendor/libretro-common/file/config_file_userdata.c \
-    $(CORE_DIR)/vendor/libretro-common/file/file_path.c \
-    $(CORE_DIR)/vendor/libretro-common/file/config_file.c \
-    $(CORE_DIR)/vendor/libretro-common/streams/file_stream.c \
-    $(CORE_DIR)/vendor/libretro-common/vfs/vfs_implementation.c \
-    $(CORE_DIR)/vendor/libretro-common/compat/compat_strcasestr.c \
-    $(CORE_DIR)/vendor/libretro-common/lists/string_list.c
+# libretro-common
+FLAGS += -I$(CORE_DIR)/vendor/libretro-common/include
+# Only compile libretro-common when not STATIC_LINKING
+ifneq ($(STATIC_LINKING), 1)
+    SOURCES_C += $(wildcard \
+        $(CORE_DIR)/vendor/libretro-common/audio/audio_mix.c \
+        $(CORE_DIR)/vendor/libretro-common/audio/audio_mixer.c \
+        $(CORE_DIR)/vendor/libretro-common/audio/conversion/*.c \
+        $(CORE_DIR)/vendor/libretro-common/audio/resampler/audio_resampler.c \
+        $(CORE_DIR)/vendor/libretro-common/audio/resampler/drivers/nearest_resampler.c \
+        $(CORE_DIR)/vendor/libretro-common/audio/resampler/drivers/null_resampler.c \
+        $(CORE_DIR)/vendor/libretro-common/audio/resampler/drivers/sinc_resampler.c \
+        $(CORE_DIR)/vendor/libretro-common/compat/compat_posix_string.c \
+        $(CORE_DIR)/vendor/libretro-common/compat/compat_strcasestr.c \
+        $(CORE_DIR)/vendor/libretro-common/compat/compat_strl.c \
+        $(CORE_DIR)/vendor/libretro-common/compat/fopen_utf8.c \
+        $(CORE_DIR)/vendor/libretro-common/encodings/encoding_utf.c \
+        $(CORE_DIR)/vendor/libretro-common/features/features_cpu.c \
+        $(CORE_DIR)/vendor/libretro-common/file/config_file.c \
+        $(CORE_DIR)/vendor/libretro-common/file/config_file_userdata.c \
+        $(CORE_DIR)/vendor/libretro-common/file/file_path.c \
+        $(CORE_DIR)/vendor/libretro-common/formats/wav/rwav.c \
+        $(CORE_DIR)/vendor/libretro-common/lists/string_list.c \
+        $(CORE_DIR)/vendor/libretro-common/memmap/memalign.c \
+        $(CORE_DIR)/vendor/libretro-common/streams/file_stream.c \
+        $(CORE_DIR)/vendor/libretro-common/vfs/*.c \
+    )
+    # Ensure the sinc_resampler_neon is available for ARM NEON devices.
+    OBJECTS += $(CORE_DIR)/vendor/libretro-common/audio/resampler/drivers/sinc_resampler_neon.o
+endif
 
+# zlib
+SOURCES_C += \
+    $(CORE_DIR)/vendor/libretro-deps/libz/adler32.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/compress.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/crc32.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/deflate.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/gzclose.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/gzlib.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/gzread.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/gzwrite.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/infback.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/inffast.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/inflate.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/inftrees.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/trees.c \
+    $(CORE_DIR)/vendor/libretro-deps/libz/zutil.c
+FLAGS += -I$(CORE_DIR)/vendor/libretro-deps/libz
+FLAGS += -I$(CORE_DIR)/vendor/libretro-common/compat
+FLAGS += -DWANT_ZLIB
+
+# libpng
+SOURCES_C += $(wildcard \
+    $(CORE_DIR)/vendor/libretro-deps/libpng/*.c \
+)
+FLAGS += -I$(CORE_DIR)/vendor/libretro-deps/libpng
+
+# FreeType2
+# See https://github.com/emscripten-ports/FreeType/blob/master/builds/amiga/makefile
+FLAGS += -I$(CORE_DIR)/vendor/libretro-deps/freetype/include
+FLAGS += -DFT2_BUILD_LIBRARY \
+    -DFT_USE_AUTOFIT \
+    -DFT_USE_RASTER \
+    -DFT_USE_SMOOTH \
+    -DFT_USE_TT \
+    -DFT_USE_T1 \
+    -DFT_USE_T42 \
+    -DFT_USE_T1CID \
+    -DFT_USE_CFF \
+    -DFT_USE_OTV \
+    -DFT_USE_GXV
+SOURCES_C += \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/autofit/autofit.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftbase.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftbbox.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftbdf.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftbitmap.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftcid.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftdebug.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftfntfmt.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftfstype.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftgasp.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftglyph.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftgxval.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftinit.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftlcdfil.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftmm.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftotval.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftpatent.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftpfr.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftstroke.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftsynth.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftsystem.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/fttype1.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/base/ftwinfnt.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/bdf/bdf.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/bzip2/ftbzip2.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/cache/ftcache.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/cff/cff.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/cid/type1cid.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/gzip/ftgzip.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/lzw/ftlzw.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/pcf/pcf.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/pfr/pfr.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/psaux/psaux.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/pshinter/pshinter.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/psnames/psnames.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/raster/raster.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/sfnt/sfnt.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/smooth/smooth.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/truetype/truetype.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/type1/type1.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/type42/type42.c \
+    $(CORE_DIR)/vendor/libretro-deps/freetype/src/winfonts/winfnt.c
+
+# Pixman
+SOURCES_C += $(wildcard \
+    $(CORE_DIR)/vendor/libretro-deps/pixman/*.c \
+)
+FLAGS += -I$(CORE_DIR)/vendor/libretro-deps/pixman
+FLAGS += -DWANT_PIXMAN
+
+# Cairo
+SOURCES_C += $(wildcard \
+    $(CORE_DIR)/vendor/libretro-deps/cairo/src/*.c \
+)
+FLAGS += -I$(CORE_DIR)/vendor/libretro-deps/cairo/src
+FLAGS += -DWANT_CAIRO
+
+# Compilation
 OBJECTS += $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
 
 LDFLAGS +=  $(fpic) $(SHARED) $(EXTRA_LDF)
