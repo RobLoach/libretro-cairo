@@ -4,7 +4,7 @@ SOURCES_CXX := $(wildcard \
 )
 
 # libretro-common
-FLAGS += -I$(CORE_DIR)/tmp/include
+FLAGS += -I$(CORE_DIR)/tmp/include -I$(CORE_DIR)/src
 
 ifneq (,$(findstring msvc2003,$(platform)))
 INCFLAGS += -I$(CORE_DIR)/vendor/libretro-common/include/compat/msvc
@@ -38,7 +38,7 @@ ifneq ($(STATIC_LINKING), 1)
         $(CORE_DIR)/vendor/libretro-common/vfs/*.c \
     )
     # Ensure the sinc_resampler_neon is available for ARM NEON devices.
-    #OBJECTS += $(CORE_DIR)/vendor/libretro-common/audio/resampler/drivers/sinc_resampler_neon.o
+    SOURCES_S += $(CORE_DIR)/vendor/libretro-common/audio/resampler/drivers/sinc_resampler_neon.S
 endif
 
 # zlib
@@ -127,11 +127,11 @@ SOURCES_C += \
 
 # Pixman
 SOURCES_C += $(wildcard \
-    $(CORE_DIR)/vendor/libretro-deps/pixman/*.c \
+    $(CORE_DIR)/vendor/pixman/pixman/*.c \
+    $(CORE_DIR)/vendor/pixman/pixman/*.S \
 )
-FLAGS += -I$(CORE_DIR)/vendor/libretro-deps/pixman
+FLAGS += -I$(CORE_DIR)/vendor/pixman/pixman
 FLAGS += -DPIXMAN_NO_TLS
-FLAGS += -DWANT_PIXMAN
 FLAGS += -msse4.1
 
 # Cairo
@@ -142,7 +142,7 @@ FLAGS += -I$(CORE_DIR)/vendor/libretro-deps/cairo/src
 FLAGS += -DWANT_CAIRO
 
 # Compilation
-OBJECTS += $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
+OBJECTS += $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o) $(SOURCES_S:.S=.o)
 
 LDFLAGS +=  $(fpic) $(SHARED) $(EXTRA_LDF)
 
