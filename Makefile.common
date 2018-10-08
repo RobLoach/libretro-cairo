@@ -128,10 +128,14 @@ SOURCES_C += \
 # Pixman
 SOURCES_C += $(wildcard \
     $(CORE_DIR)/vendor/pixman/pixman/*.c \
+)
+SOURCES_S += $(wildcard \
     $(CORE_DIR)/vendor/pixman/pixman/*.S \
 )
 FLAGS += -I$(CORE_DIR)/vendor/pixman/pixman
 FLAGS += -DPIXMAN_NO_TLS
+FLAGS += -DHAVE_CONFIG_H
+FLAGS += -DPACKAGE
 FLAGS += -msse4.1
 
 # Cairo
