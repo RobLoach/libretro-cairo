@@ -70,7 +70,7 @@ $(DEP_INSTALL_DIR)/lib/libpixman-1.a: $(DEP_INSTALL_DIR)/lib/libpng.a
 
 $(DEP_INSTALL_DIR)/lib/libz.a:
 	cd $(CORE_DIR)/vendor/zlib && \
-		./configure $(host_opts) --static --sharedlibdir="$(DEP_INSTALL_DIR)/lib" --libdir="$(DEP_INSTALL_DIR)/lib" --includedir="$(DEP_INSTALL_DIR)/include" \
+		CFLAGS="-fPIC" ./configure $(host_opts) --static --sharedlibdir="$(DEP_INSTALL_DIR)/lib" --libdir="$(DEP_INSTALL_DIR)/lib" --includedir="$(DEP_INSTALL_DIR)/include" \
 		--prefix=$(DEP_INSTALL_DIR)
 	$(MAKE) -C "$(CORE_DIR)/vendor/zlib"
 	$(MAKE) -C "$(CORE_DIR)/vendor/zlib" install
