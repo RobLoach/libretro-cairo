@@ -6,10 +6,6 @@
 	path = vendor/cairo
 	url = https://gitlab.com/cairo/cairo.git
 	ignore = dirty
-[submodule "vendor/pixman"]
-	path = vendor/pixman
-	url = https://anongit.freedesktop.org/git/pixman.git
-	ignore = dirty
 [submodule "vendor/libpng"]
 	path = vendor/libpng
 	url = https://github.com/glennrp/libpng.git
@@ -29,3 +25,8 @@
 [submodule "vendor/noarch"]
 	path = vendor/noarch
 	url = https://github.com/RobLoach/noarch.git
+	ignore = dirty
+[submodule "vendor/pixman"]
+	path = vendor/pixman
+	url = https://github.com/freedesktop/pixman.git
+	ignore = dirty
