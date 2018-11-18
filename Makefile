@@ -43,7 +43,7 @@ vendor/libretro-common/include/libretro.h:
 $(OBJECTS): vendor/libretro-common/include/libretro.h deps
 
 $(TARGET): $(OBJECTS)
-	$(CXX) $(INCLUDES) -o $@ $^ $(LDFLAGS) $(LIBS)
+	$(CXX) $(fpic) $(SHARED) $(INCLUDES) $(LFLAGS) -o $@ $(OBJECTS) $(LIBS)
 
 %.o: %.cpp
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
@@ -54,20 +54,26 @@ $(TARGET): $(OBJECTS)
 $(DEP_INSTALL_DIR)/lib/libpixman-1.a: $(DEP_INSTALL_DIR)/lib/libpng.a
 	cd $(CORE_DIR)/vendor/pixman && \
 		./autogen.sh && \
-		./configure $(host_opts) --enable-shared=no --enable-static=yes \
+		./configure $(host_opts) \
+			--enable-shared=no \
+			--enable-static=yes \
 			--enable-libpng \
 			--disable-gtk \
 			--disable-loongson-mmi \
-			LIBPNG_CFLAGS="-I$(DEP_INSTALL_DIR)/include" LIBPNG_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+			PNG_CFLAGS="-I$(DEP_INSTALL_DIR)/include" \
+			PNG_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
 			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
 			CPPFLAGS="-I$(DEP_INSTALL_DIR)/include" \
-			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
-		$(MAKE) && $(MAKE) install
+			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR)
+	$(MAKE) -C "$(CORE_DIR)/vendor/pixman"
+	$(MAKE) -C "$(CORE_DIR)/vendor/pixman" install
 
 $(DEP_INSTALL_DIR)/lib/libz.a:
 	cd $(CORE_DIR)/vendor/zlib && \
-		./configure --prefix=$(DEP_INSTALL_DIR) && \
-		$(MAKE) && $(MAKE) install
+		CFLAGS="-fPIC" ./configure $(host_opts) --static --sharedlibdir="$(DEP_INSTALL_DIR)/lib" --libdir="$(DEP_INSTALL_DIR)/lib" --includedir="$(DEP_INSTALL_DIR)/include" \
+		--prefix=$(DEP_INSTALL_DIR)
+	$(MAKE) -C "$(CORE_DIR)/vendor/zlib"
+	$(MAKE) -C "$(CORE_DIR)/vendor/zlib" install
 
 $(DEP_INSTALL_DIR)/lib/libpng.a: $(DEP_INSTALL_DIR)/lib/libz.a
 	cd $(CORE_DIR)/vendor/libpng && \
@@ -76,8 +82,9 @@ $(DEP_INSTALL_DIR)/lib/libpng.a: $(DEP_INSTALL_DIR)/lib/libz.a
 			--enable-hardware-optimizations=no \
 			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
 			CPPFLAGS="-I$(DEP_INSTALL_DIR)/include" \
-			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR) && \
-		$(MAKE) && $(MAKE) install
+			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR)
+	$(MAKE) -C "$(CORE_DIR)/vendor/libpng"
+	$(MAKE) -C "$(CORE_DIR)/vendor/libpng" install
 
 # Font Config
 # Requires: uuid-dev
@@ -107,7 +114,7 @@ $(DEP_INSTALL_DIR)/lib/libpng.a: $(DEP_INSTALL_DIR)/lib/libz.a
 #		$(MAKE) && $(MAKE) install
 
 $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a # $(DEP_INSTALL_DIR)/lib/libfreetype.a
-	cd $(CORE_DIR)/vendor/cairo && \
+	cd "$(CORE_DIR)/vendor/cairo" && \
 		./autogen.sh && \
 		./configure $(host_opts) --enable-static=yes --enable-shared=no \
 			--enable-ft=yes \
@@ -142,22 +149,23 @@ $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_IN
 			png_CFLAGS="-I$(DEP_INSTALL_DIR)/include" png_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
 			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
 			CPPFLAGS="-I$(DEP_INSTALL_DIR)/include" \
-			--prefix=$(DEP_INSTALL_DIR) && \
-		$(MAKE) && $(MAKE) install
+			--prefix=$(DEP_INSTALL_DIR)
+	$(MAKE) -C "$(CORE_DIR)/vendor/cairo"
+	$(MAKE) -C "$(CORE_DIR)/vendor/cairo" install
 
 			#FREETYPE_CFLAGS="-I$(DEP_INSTALL_DIR)/include/freetype2" FREETYPE_LIBS="-L$(DEP_INSTALL_DIR)/lib -lfreetype" \
 			#FONTCONFIG_CFLAGS="-I$(DEP_INSTALL_DIR)/include" FREETYPE_LIBS="-L$(DEP_INSTALL_DIR)/lib -lfontconfig" \
 
 clean_cairo:
-	cd vendor/cairo && make distclean || true
+	make -C "$(CORE_DIR)/vendor/cairo" distclean || true
 
 clean_pixman:
-	cd vendor/pixman && make distclean || true
+	make -C "$(CORE_DIR)/vendor/pixman" distclean || true
 
 clean_png:
-	cd vendor/libpng && make distclean || true
+	make -C "$(CORE_DIR)/vendor/libpng" distclean || true
 
-clean: clean_cairo clean_pixman
+clean: clean_cairo clean_pixman clean_png
 	rm -rf $(TARGET) $(OBJECTS) $(DEP_INSTALL_DIR)
 	git clean -xdf
 	rm -rf vendor
@@ -168,6 +176,11 @@ clean: clean_cairo clean_pixman
 versions: vendor/libretro-common/include/libretro.h
 	@git submodule foreach 'git describe --exact-match --tags $(git log -n1 --pretty='%h') || true'
 
+vendor/noarch/noarch: vendor/libretro-common/include/libretro.h
+	make -C vendor/noarch
+
+test: vendor/noarch/noarch $(TARGET)
+	vendor/noarch/noarch $(CORE_DIR)/$(TARGET) $(TARGET)
 
 PREFIX := /usr
 INSTALLDIR := $(PREFIX)/lib/libretro
