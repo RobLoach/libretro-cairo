@@ -115,7 +115,7 @@ $(DEP_INSTALL_DIR)/lib/libpng.a: $(DEP_INSTALL_DIR)/lib/libz.a
 
 $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a # $(DEP_INSTALL_DIR)/lib/libfreetype.a
 	cd "$(CORE_DIR)/vendor/cairo" && \
-		./autogen.sh && \
+		PKG_CONFIG_PATH=$(PREFIX)/lib/pkgconfig ./autogen.sh --prefix=$(DEP_INSTALL_DIR) && \
 		./configure $(host_opts) --enable-static=yes --enable-shared=no \
 			--enable-ft=yes \
 			--enable-gtk-doc=no \
