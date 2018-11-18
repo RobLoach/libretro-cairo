@@ -10,6 +10,7 @@
 #include <cstring>
 #include <cstdlib>
 
+
 #include "audio/audio_mixer.h"
 
 int SCREEN_PITCH = 0;
@@ -66,8 +67,8 @@ void* ReadFile(const std::string& name, int &size)
 }
 
 void game_load() {
-    // Load the image.
-    image = cairo_image_surface_create_from_png("test/mario.png");
+    // Load the initial image.
+    image = cairo_image_surface_create_from_png("src/sprite.png");
 
     // Load the wav file.
     int size;
@@ -81,14 +82,12 @@ void game_load() {
 
 void game_init()
 {
+    // Create the screen context.
     SCREEN_PITCH = cairo_format_stride_for_width(CAIRO_FORMAT_RGB16_565, SCREEN_WIDTH);
-
     frame_buf = (uint16_t*)calloc(SCREEN_HEIGHT, SCREEN_PITCH);
-
     surface = cairo_image_surface_create_for_data(
         (unsigned char*)frame_buf, CAIRO_FORMAT_RGB16_565, SCREEN_WIDTH, SCREEN_HEIGHT,
         SCREEN_PITCH);
-
     ctx = cairo_create(surface);
 }
 
@@ -126,6 +125,15 @@ void game_render() {
    cairo_set_source_rgb(ctx, 78.0 / 255.0, 205.0 / 255.0, 196.0 / 255.0);
    cairo_paint(ctx);
 
+   // Benchmark
+  for (int sx = 0; sx < 10; sx++) {
+      for (int sy = 0; sy < 10; sy++) {
+         cairo_set_source_surface(ctx, image, sx * 60.0, sy * 40.0);
+         cairo_paint(ctx);
+      }
+  }
+
+
    // Draw a square.
    cairo_set_source_rgb(ctx, 255.0 / 255.0, 230.0 / 255.0, 109.0 / 255.0);
    cairo_rectangle(ctx, x++, y, 100, 100);
@@ -138,25 +146,31 @@ void game_render() {
 
    // Test the freetype.
    cairo_select_font_face (ctx, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-   cairo_set_font_size (ctx, 90.0);
+   cairo_set_font_size (ctx, 40.0);
    cairo_move_to (ctx, 10.0, 135.0);
-   cairo_show_text (ctx, "Hello");
+   cairo_show_text (ctx, "Hello World");
 
-   cairo_move_to (ctx, 70.0, 165.0);
-   cairo_text_path (ctx, "World");
+   cairo_set_font_size (ctx, 20.0);
+   cairo_move_to (ctx, 10.0, 440.0);
+
    cairo_set_source_rgb (ctx, 0.5, 0.5, 1);
-   cairo_fill_preserve (ctx);
-   cairo_set_source_rgb (ctx, 0, 0, 0);
-   cairo_set_line_width (ctx, 2.56);
-   cairo_stroke (ctx);
+   //cairo_fill_preserve (ctx);
+   //cairo_set_source_rgb (ctx, 0, 0, 0);
+   //cairo_set_line_width (ctx, 2.56);
+   //cairo_stroke (ctx);
 
    // Draw the image.
-   cairo_set_source_surface(ctx, image, 400, 80);
-   cairo_paint(ctx);
+   //cairo_set_source_surface(ctx, image, 400, 80);
+   //cairo_paint(ctx);
+
+
+
 
    // Set the frame buffer.
    video_cb(frame_buf, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_PITCH);
 }
+
+
 void game_reset() {
     x = 0;
 }
