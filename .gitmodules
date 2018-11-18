@@ -25,3 +25,8 @@
 [submodule "vendor/noarch"]
 	path = vendor/noarch
 	url = https://github.com/RobLoach/noarch.git
+	ignore = dirty
+[submodule "vendor/pixman"]
+	path = vendor/pixman
+	url = https://github.com/freedesktop/pixman.git
+	ignore = dirty
