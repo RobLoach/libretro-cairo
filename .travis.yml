@@ -22,7 +22,7 @@ before_install:
       export PATH=/usr/lib/binutils-2.26/bin:${PATH};
     fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      brew install --force-bottle fontconfig freetype gcc;
+      brew install ccache fontconfig freetype gcc;
       brew link --overwrite gcc;
       export CC=gcc;
       export CXX=g++;
@@ -48,18 +48,20 @@ env:
   global:
     - MAKEFLAGS="-j2"
 
-script:
-  - $CC --version
+before_script:
   - ./configure
-  - make
+
+script:
+  - make || cat config.log
   #- if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then make ; fi
   #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make platform=osx -j2 ; fi
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then make test ; fi
 
 cache:
-    apt: true
-    #directories:
-    #- vendor
+  apt: true
+  ccache: true
+  directories:
+    - $HOME/Library/Caches/Homebrew
 
 notifications:
   email: false
