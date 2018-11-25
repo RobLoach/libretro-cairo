@@ -6,8 +6,7 @@ matrix:
       dist: trusty
       sudo: required
       compiler: gcc
-    - env: COMPILER=clang++ BUILD_TYPE=Debug GSL_CXX_STANDARD=14
-      os: osx
+    - os: osx
       osx_image: xcode9.1
       compiler: gcc
   allow_failures:
