@@ -7,8 +7,9 @@ matrix:
       dist: trusty
       sudo: required
     - os: osx
-      osx_image: xcode10.1
-      env: COMPILER=g++-7 BUILD_TYPE=Debug GSL_CXX_STANDARD=17
+      osx_image: xcode8
+      env:
+        - MATRIX_EVAL="brew install gcc && CC=gcc-7 && CXX=g++-7"
   allow_failures:
     - os: osx
 
@@ -18,8 +19,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90 ; fi
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90 ; fi
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then export PATH=/usr/lib/binutils-2.26/bin:${PATH} ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install --force-bottle fontconfig freetype gcc@7; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$CC" = "gcc" ]; then export CC=gcc-7; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install --force-bottle fontconfig freetype; fi
 
 addons:
   apt:
