@@ -9,17 +9,24 @@ matrix:
     - env: COMPILER=clang++ BUILD_TYPE=Debug GSL_CXX_STANDARD=14
       os: osx
       osx_image: xcode9.1
-      compiler: clang
+      compiler: gcc
   allow_failures:
     - os: osx
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get -qq update ; fi
-  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install g++-7 binutils-2.26 ; fi
-  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90 ; fi
-  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90 ; fi
-  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then export PATH=/usr/lib/binutils-2.26/bin:${PATH} ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install --force-bottle fontconfig freetype; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      sudo apt-get -qq update;
+      sudo apt-get install g++-7 binutils-2.26;
+      sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90;
+      sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90;
+      export PATH=/usr/lib/binutils-2.26/bin:${PATH};
+    fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew install --force-bottle fontconfig freetype gcc;
+      brew link --overwrite gcc;
+      export CC=gcc;
+      export CXX=g++;
+    fi
 
 addons:
   apt:
@@ -42,6 +49,7 @@ env:
     - MAKEFLAGS="-j2"
 
 script:
+  - $CC --version
   - ./configure
   - make
   #- if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then make ; fi
