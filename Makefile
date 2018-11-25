@@ -126,7 +126,6 @@ $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_IN
 			--enable-svg=no \
 			--enable-pdf=no \
 			--enable-ps=no \
-			--enable-glib=no \
 			--enable-egl=no \
 			--enable-glx=no \
 			--enable-wgl=no \
@@ -138,9 +137,6 @@ $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_IN
 			--enable-xlib=no \
 			--enable-pthread=no \
 			--enable-drm=no \
-			--enable-xcb-drm=no \
-			--enable-drm-xr=no \
-			--enable-lto=no \
 			--enable-qt=no \
 			--enable-full-testing=no \
 			--with-x=no \

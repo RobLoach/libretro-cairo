@@ -48,12 +48,11 @@ env:
     - MAKEFLAGS="-j2"
 
 before_script:
+  - $CC --version
   - ./configure
 
 script:
-  - make || cat config.log
-  #- if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then make ; fi
-  #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make platform=osx -j2 ; fi
+  - make || (cat vendor/cairo/config.log && exit 1)
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then make test ; fi
 
 cache:
