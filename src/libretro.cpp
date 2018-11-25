@@ -9,6 +9,9 @@
 
 #include "game.h"
 
+#define BUFSIZE 735 /* 44100/60 */
+#define BUFSIZETIMESTWO 1470 /* 44100/60*2 */
+
 retro_log_printf_t log_cb;
 retro_video_refresh_t video_cb;
 
@@ -354,11 +357,10 @@ void retro_run(void) {
 	}
 
 	// Update the audio.
-	int BUFSIZE = 44100/60;
-	float samples[BUFSIZE * 2] = { 0 };
-	int16_t samples2[2 * BUFSIZE] = { 0 };
+	float samples[BUFSIZETIMESTWO] = { 0 };
+	int16_t samples2[BUFSIZETIMESTWO] = { 0 };
 	audio_mixer_mix(samples, BUFSIZE, 1.0, false);
-	convert_float_to_s16(samples2,samples, 2 * BUFSIZE);
+	convert_float_to_s16(samples2,samples, BUFSIZETIMESTWO);
 	audio_batch_cb(samples2, BUFSIZE);
 
 	// Render the game.
