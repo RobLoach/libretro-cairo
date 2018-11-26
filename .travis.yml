@@ -21,11 +21,11 @@ before_install:
       export PATH=/usr/lib/binutils-2.26/bin:${PATH};
     fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      sudo xcode-select -s /Applications/Xcode.app/Contents/Developer/;
       brew install ccache fontconfig freetype gcc;
       brew link --overwrite gcc;
       export CC=gcc;
       export CXX=g++;
-      sudo xcode-select -s /Applications/Xcode.app/Contents/Developer/
     fi
 
 addons:
