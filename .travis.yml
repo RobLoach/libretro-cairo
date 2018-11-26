@@ -25,7 +25,7 @@ before_install:
       brew link --overwrite gcc;
       export CC=gcc;
       export CXX=g++;
-      xcode-select -s /Applications/Xcode.app/Contents/Developer/
+      xcode-select -s /Applications/Xcode.app/Contents/Developer/;
     fi
 
 addons:
