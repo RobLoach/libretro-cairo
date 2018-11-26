@@ -2,6 +2,9 @@
 # https://ci.appveyor.com/project/RobLoach/libretro-chailove
 version: '{build}'
 
+platform: x86
+configuration: Debug
+
 # Don't build the Documentation
 branches:
   except:
@@ -14,7 +17,7 @@ image: Visual Studio 2017
 
 environment:
   CC: gcc.exe
-  TARGET: chailove_libretro.dll
+  TARGET: cairo_libretro.dll
   platform: win
   system_platform: win
 
@@ -40,3 +43,11 @@ build_script:
 #
 #test_script:
 #  - make unittest
+
+matrix:
+  fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
+  allow_failures:
+    - platform: x86
+      configuration: Debug
+    #- platform: x64
+    #  configuration: Release
