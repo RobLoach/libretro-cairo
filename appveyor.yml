@@ -26,7 +26,8 @@ init:
 
 install:
   - git submodule update --init --recursive
-  - C:\MinGW\bin\mingw-get install autotools autoconf automake
+  - if [%COMPILER%]==[MinGW] mingw-get update
+  - if [%COMPILER%]==[MinGW] mingw-get install autotools autoconf automake
   - copy c:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin\mingw32-make.exe c:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin\make.exe
   - cmd: set PATH=%PATH%;c:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
   - path
@@ -46,9 +47,8 @@ build_script:
 #  - make unittest
 
 matrix:
-  fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
-  allow_failures:
-    - platform: x86
-      configuration: Debug
-    #- platform: x64
-    #  configuration: Release
+    - BUILD_TYPE: Debug
+      COMPILER: MinGW
+      PLATFORM: Win32
+      WITH_MPFR: yes
+      WITH_MPC: yes
