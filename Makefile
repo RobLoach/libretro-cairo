@@ -25,6 +25,7 @@ endif
 with_fpic=
 ifneq ($(fpic),)
    with_fpic := --with-pic=yes
+   CFLAGS_FPIC := CFLAGS="-fPIC"
 endif
 
 host_opts=
@@ -60,7 +61,7 @@ $(DEP_INSTALL_DIR)/lib/libpixman-1.a: $(DEP_INSTALL_DIR)/lib/libpng.a
 			--enable-libpng \
 			--disable-gtk \
 			--disable-loongson-mmi \
-			--prefix=$(DEP_INSTALL_DIR)
+			--prefix=$(DEP_INSTALL_DIR) \
 			PNG_CFLAGS="-I$(DEP_INSTALL_DIR)/include" \
 			PNG_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
 			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
@@ -72,12 +73,11 @@ $(DEP_INSTALL_DIR)/lib/libpixman-1.a: $(DEP_INSTALL_DIR)/lib/libpng.a
 
 $(DEP_INSTALL_DIR)/lib/libz.a:
 	cd $(CORE_DIR)/vendor/zlib && \
-		./configure $(host_opts) \
+		$(CFLAGS_FPIC) ./configure $(host_opts) \
 			--static --sharedlibdir="$(DEP_INSTALL_DIR)/lib" \
 			--libdir="$(DEP_INSTALL_DIR)/lib" \
 			--includedir="$(DEP_INSTALL_DIR)/include" \
-			--prefix=$(DEP_INSTALL_DIR) \
-			$(with_fpic)
+			--prefix=$(DEP_INSTALL_DIR)
 	$(MAKE) -C "$(CORE_DIR)/vendor/zlib"
 	$(MAKE) -C "$(CORE_DIR)/vendor/zlib" install
 
@@ -126,7 +126,9 @@ $(DEP_INSTALL_DIR)/lib/libpng.a: $(DEP_INSTALL_DIR)/lib/libz.a
 $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_INSTALL_DIR)/lib/libpng.a # $(DEP_INSTALL_DIR)/lib/libfreetype.a
 	cd "$(CORE_DIR)/vendor/cairo" && \
 		PKG_CONFIG_PATH=$(DEP_INSTALL_DIR)/lib/pkgconfig ./autogen.sh --prefix=$(DEP_INSTALL_DIR) && \
-		./configure $(host_opts) --enable-static=yes --enable-shared=no \
+		./configure $(host_opts) \
+			--enable-static=yes \
+			--enable-shared=no \
 			--enable-ft=yes \
 			--enable-gtk-doc=no \
 			--enable-gobject=no \
@@ -154,9 +156,12 @@ $(DEP_INSTALL_DIR)/lib/libcairo.a: $(DEP_INSTALL_DIR)/lib/libpixman-1.a $(DEP_IN
 			--enable-qt=no \
 			--enable-full-testing=no \
 			--with-x=no \
-			$(with_fpic) CFLAGS="-fno-lto -DCAIRO_NO_MUTEX=1 -Wl,--verbose" \
-			pixman_CFLAGS="-I$(DEP_INSTALL_DIR)/include/pixman-1" pixman_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpixman-1" \
-			png_CFLAGS="-I$(DEP_INSTALL_DIR)/include" png_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
+			$(with_fpic) \
+			CFLAGS="-fno-lto -DCAIRO_NO_MUTEX=1 -Wl,--verbose" \
+			pixman_CFLAGS="-I$(DEP_INSTALL_DIR)/include/pixman-1" \
+			pixman_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpixman-1" \
+			png_CFLAGS="-I$(DEP_INSTALL_DIR)/include" \
+			png_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
 			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
 			CPPFLAGS="-I$(DEP_INSTALL_DIR)/include" \
 			--prefix=$(DEP_INSTALL_DIR)
