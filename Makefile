@@ -60,29 +60,39 @@ $(DEP_INSTALL_DIR)/lib/libpixman-1.a: $(DEP_INSTALL_DIR)/lib/libpng.a
 			--enable-libpng \
 			--disable-gtk \
 			--disable-loongson-mmi \
+			--prefix=$(DEP_INSTALL_DIR)
 			PNG_CFLAGS="-I$(DEP_INSTALL_DIR)/include" \
 			PNG_LIBS="-L$(DEP_INSTALL_DIR)/lib -lpng" \
 			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
 			CPPFLAGS="-I$(DEP_INSTALL_DIR)/include" \
-			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR)
+			$(with_fpic) \
+			CFLAGS="-fno-lto"
 	$(MAKE) -C "$(CORE_DIR)/vendor/pixman"
 	$(MAKE) -C "$(CORE_DIR)/vendor/pixman" install
 
 $(DEP_INSTALL_DIR)/lib/libz.a:
 	cd $(CORE_DIR)/vendor/zlib && \
-		CFLAGS="-fPIC" ./configure $(host_opts) --static --sharedlibdir="$(DEP_INSTALL_DIR)/lib" --libdir="$(DEP_INSTALL_DIR)/lib" --includedir="$(DEP_INSTALL_DIR)/include" \
-		--prefix=$(DEP_INSTALL_DIR)
+		./configure $(host_opts) \
+			--static --sharedlibdir="$(DEP_INSTALL_DIR)/lib" \
+			--libdir="$(DEP_INSTALL_DIR)/lib" \
+			--includedir="$(DEP_INSTALL_DIR)/include" \
+			--prefix=$(DEP_INSTALL_DIR) \
+			$(with_fpic)
 	$(MAKE) -C "$(CORE_DIR)/vendor/zlib"
 	$(MAKE) -C "$(CORE_DIR)/vendor/zlib" install
 
 $(DEP_INSTALL_DIR)/lib/libpng.a: $(DEP_INSTALL_DIR)/lib/libz.a
 	cd $(CORE_DIR)/vendor/libpng && \
 		./autogen.sh; \
-		./configure $(host_opts) --enable-shared=no --enable-static=yes \
+		./configure $(host_opts) \
+			--enable-shared=no \
+			--enable-static=yes \
 			--enable-hardware-optimizations=no \
+			--prefix=$(DEP_INSTALL_DIR) \
+			$(with_fpic) \
 			LDFLAGS="-L$(DEP_INSTALL_DIR)/lib" \
 			CPPFLAGS="-I$(DEP_INSTALL_DIR)/include" \
-			$(with_fpic) CFLAGS="-fno-lto" --prefix=$(DEP_INSTALL_DIR)
+			CFLAGS="-fno-lto"
 	$(MAKE) -C "$(CORE_DIR)/vendor/libpng"
 	$(MAKE) -C "$(CORE_DIR)/vendor/libpng" install
 
