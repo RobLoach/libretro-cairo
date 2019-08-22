@@ -26,3 +26,6 @@
 	path = vendor/pixman
 	url = https://github.com/freedesktop/pixman.git
 	ignore = dirty
+[submodule "vendor/cairo"]
+	path = vendor/cairo
+	url = https://github.com/freedesktop/cairo.git
