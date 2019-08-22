@@ -2,10 +2,6 @@
 	path = vendor/libretro-common
 	url = https://github.com/libretro/libretro-common.git
 	ignore = dirty
-[submodule "vendor/cairo"]
-	path = vendor/cairo
-	url = https://gitlab.com/cairo/cairo.git
-	ignore = dirty
 [submodule "vendor/libpng"]
 	path = vendor/libpng
 	url = https://github.com/glennrp/libpng.git
